@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.bluetangstudio.shared.jersey.services;
+package com.financeactive.tapestry.jersey.services;
 
 import com.sun.jersey.spi.container.servlet.ServletContainer;
 
@@ -23,10 +23,12 @@ import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ScopeConstants;
 import org.apache.tapestry5.ioc.annotations.EagerLoad;
 import org.apache.tapestry5.ioc.annotations.Scope;
+import org.apache.tapestry5.ioc.annotations.Startup;
 import org.apache.tapestry5.services.ApplicationGlobals;
 import org.apache.tapestry5.services.HttpServletRequestFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletContext;
@@ -37,6 +39,8 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Handler;
+import java.util.logging.LogManager;
 
 public class JerseyModule {
 
@@ -82,19 +86,20 @@ public class JerseyModule {
         }
 
         LOG.info("Start Jersey Application with singletons providers:({})\n and classes providers:({})", singletons, classes);
-        return new TapestryEnabledApplication(singletons, classes);
+        return new TapestryEnabledJAXRSApplication(singletons, classes);
     }
 
     @Scope(ScopeConstants.DEFAULT)
     @EagerLoad
     public static HttpServletRequestFilter buildJerseyHttpServletRequestFilter(
-            @Service("JerseyRootResources") Application jaxwsApplication, ApplicationGlobals applicationGlobal,
+            @Service("JerseyRootResources") Application jaxwsApplication,
+            ApplicationGlobals applicationGlobal,
             ObjectLocator objectLocator) throws ServletException {
 
         ServletContainer jaxwsContainer = new ServletContainer(jaxwsApplication);
         final ServletContext servletContext = applicationGlobal.getServletContext();
         final Hashtable<String, String> params = new Hashtable<String, String>();
-        params.put("javax.ws.rs.Application", TapestryEnabledApplication.class.getName());
+        params.put("javax.ws.rs.Application", TapestryEnabledJAXRSApplication.class.getName());
 
         jaxwsContainer.init(new FilterConfig() {
 
@@ -121,6 +126,17 @@ public class JerseyModule {
         JerseyRequestFilter ret = objectLocator.autobuild(JerseyRequestFilter.class);
         ret.setServletContainer(jaxwsContainer);
         return ret;
+    }
+
+
+    @Startup
+    public static void installJul2slf4jHandler() {
+        // Jersey uses java.util.logging - bridge to slf4
+        java.util.logging.Logger rootLogger = LogManager.getLogManager().getLogger("");
+        for (Handler handler : rootLogger.getHandlers()) {
+            rootLogger.removeHandler(handler);
+        }
+        SLF4JBridgeHandler.install();
     }
 
 }

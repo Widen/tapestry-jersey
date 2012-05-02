@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.bluetangstudio.shared.jersey.services;
+package com.financeactive.tapestry.jersey.services;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -24,11 +24,11 @@ import javax.ws.rs.core.Application;
  * Application that offers tapestry managed services to Jersey Application.
  * 
  */
-public class TapestryEnabledApplication extends Application {
+public class TapestryEnabledJAXRSApplication extends Application {
 
-    private Set<Object> _singletons;
+    private Set<Object> singletons;
 
-    private Set<Class<?>> _classes;
+    private Set<Class<?>> classes;
 
     /**
      * 
@@ -37,19 +37,20 @@ public class TapestryEnabledApplication extends Application {
      * collection too.
      *
      */
-    public TapestryEnabledApplication(Collection<?> singletons, Collection<Class<?>> classes) {
-        _singletons = new HashSet<Object>(singletons);
-        _classes = new HashSet<Class<?>>(classes);
+    public TapestryEnabledJAXRSApplication(Collection<?> singletons,
+                                           Collection<Class<?>> classes) {
+        this.singletons = new HashSet<Object>(singletons);
+        this.classes = new HashSet<Class<?>>(classes);
     }
 
     @Override
     public Set<Object> getSingletons() {
-        return _singletons;
+        return singletons;
     }
 
     @Override
     public Set<java.lang.Class<?>> getClasses() {
-        return _classes;
+        return classes;
     }
         
 }

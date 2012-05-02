@@ -6,7 +6,7 @@
 
 	<context-param>
 		<param-name>tapestry.app-package</param-name>
-		<param-value>com.bluetangstudio.shared.jersey.test</param-value>
+		<param-value>com.financeactive.tapestry.jersey.test</param-value>
 	</context-param>
 
 	<filter>

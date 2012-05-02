@@ -12,9 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.bluetangstudio.shared.jersey.services;
+package com.financeactive.tapestry.jersey.services;
 
-import java.io.IOException;
+import com.sun.jersey.spi.container.servlet.ServletContainer;
+import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.internal.services.RequestImpl;
+import org.apache.tapestry5.internal.services.ResponseImpl;
+import org.apache.tapestry5.internal.services.TapestrySessionFactory;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
+import org.apache.tapestry5.services.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -22,23 +31,9 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.tapestry5.SymbolConstants;
-import org.apache.tapestry5.internal.services.RequestImpl;
-import org.apache.tapestry5.internal.services.ResponseImpl;
-import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.annotations.Primary;
-import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.services.HttpServletRequestFilter;
-import org.apache.tapestry5.services.HttpServletRequestHandler;
-import org.apache.tapestry5.services.Request;
-import org.apache.tapestry5.services.RequestGlobals;
-import org.apache.tapestry5.services.Response;
-import org.apache.tapestry5.services.SessionPersistedObjectAnalyzer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.sun.jersey.spi.container.servlet.ServletContainer;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * HttpServletRequestFilter that passes requests with a predefined prefix 
@@ -49,53 +44,66 @@ public class JerseyRequestFilter implements HttpServletRequestFilter {
 
     private static final Logger LOG = LoggerFactory.getLogger(JerseyRequestFilter.class);
 
-    private static final FilterChain END_OF_CHAIN = new EndOfChainFilerChain();
+    private static final FilterChain END_OF_CHAIN = new EndOfChainFilterChain();
 
-    private ServletContainer _jaxwsContainer;
+    private ServletContainer jaxwscontainer;
 
     @Inject
-    private RequestGlobals _requestGlobals;
+    private RequestGlobals requestGlobals;
     
     @Inject
-    @Symbol(JerseySymbols.REQUEST_PATH_PREFIX)
-    private String _pathPrefix;
-    
-    @Inject
-    @Primary
-    private SessionPersistedObjectAnalyzer analyzer;
+    private TapestrySessionFactory sessionFactory;
     
     @Symbol(SymbolConstants.CHARSET)
     private String applicationCharset;
 
+    private List<String> pathPrefixes;
+
+    public JerseyRequestFilter(@Inject @Symbol(JerseySymbols.REQUEST_PATH_PREFIX) String pathPrefix){
+        pathPrefixes = Arrays.asList(pathPrefix.split(","));
+    }
+
     public void setServletContainer(ServletContainer jaxwsContainer) {
-        _jaxwsContainer = jaxwsContainer;
+        jaxwscontainer = jaxwsContainer;
     }
 
     @Override
     public boolean service(HttpServletRequest request, HttpServletResponse response, HttpServletRequestHandler handler)
             throws IOException {
 
-        if (!request.getServletPath().startsWith(_pathPrefix)) {
+        boolean jerseyRequest = false;
+        //Tyhe request should be handled by jersey if it starts with one of the path prefixes
+        for (String prefix : pathPrefixes) {
+            if (request.getServletPath().startsWith(prefix)){
+                jerseyRequest = true;
+                break;
+            }
+        }
+
+        if (!jerseyRequest) {
+            LOG.debug("Skipping request " + request.getRequestURI() + "?" + request.getQueryString());
             return handler.service(request, response);
         }
+
+        LOG.debug("Handling request " + request.getRequestURI() + "?" + request.getQueryString());
 
         try {
             
             // made the request/response available in jersey managed services. 
-            Request t5request = new RequestImpl(request, applicationCharset, analyzer);
+            Request t5request = new RequestImpl(request, applicationCharset, sessionFactory);
             Response t5response = new ResponseImpl(request, response);
-            _requestGlobals.storeRequestResponse(t5request, t5response);
+            requestGlobals.storeRequestResponse(t5request, t5response);
             
-            _jaxwsContainer.doFilter(request, response, END_OF_CHAIN);
+            jaxwscontainer.doFilter(request, response, END_OF_CHAIN);
             return true;
         }
         catch (ServletException e) {
-            LOG.info("{}", e);
+            LOG.error("Jersey failed to handler the request", e);
             return false;
         }
     }
 
-    private static final class EndOfChainFilerChain implements FilterChain {
+    private static final class EndOfChainFilterChain implements FilterChain {
 
         @Override
         public void doFilter(ServletRequest request, ServletResponse response) throws IOException, ServletException {

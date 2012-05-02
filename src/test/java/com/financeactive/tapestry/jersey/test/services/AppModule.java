@@ -12,16 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.bluetangstudio.shared.jersey.test.services;
+package com.financeactive.tapestry.jersey.test.services;
 
 import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.SubModule;
 
-import com.bluetangstudio.shared.jersey.services.JerseyModule;
-import com.bluetangstudio.shared.jersey.test.services.rest.HelloWorld;
-import com.bluetangstudio.shared.jersey.test.services.rest.HelloWorldImpl;
+import com.financeactive.tapestry.jersey.services.JerseyModule;
+import com.financeactive.tapestry.jersey.test.services.rest.HelloWorld;
+import com.financeactive.tapestry.jersey.test.services.rest.HelloWorldImpl;
 
 @SubModule(JerseyModule.class)
 public class AppModule {
@@ -30,7 +30,8 @@ public class AppModule {
         binder.bind(HelloWorld.class, HelloWorldImpl.class);
     }
     
-    public static void contributeJerseyRootResources(Configuration<Object> configuration, ObjectLocator objectLocator) {
+    public static void contributeJerseyRootResources(Configuration<Object> configuration,
+                                                     ObjectLocator objectLocator) {
         configuration.add(objectLocator.getService(HelloWorld.class));
     }
 
