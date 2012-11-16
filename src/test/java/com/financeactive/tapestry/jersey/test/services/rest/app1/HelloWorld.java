@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.financeactive.tapestry.jersey.services;
+package com.financeactive.tapestry.jersey.test.services.rest.app1;
 
-public class JerseySymbols {
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
 
-    /** Symbol for request path prefix for jersey services.
-     *  If more than one path, use comma separator
-     *  Sample : "/rest,/feeds"
-     **/
-    public static final String REQUEST_PATH_PREFIX = "jersey.path.prefix";
+@Path("/helloworld")
+public interface HelloWorld {
+    @GET
+    public String getHello();
 
 }

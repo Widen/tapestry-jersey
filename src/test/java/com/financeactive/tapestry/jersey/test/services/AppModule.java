@@ -14,25 +14,31 @@
 
 package com.financeactive.tapestry.jersey.test.services;
 
+import com.financeactive.tapestry.jersey.services.JerseyModule;
+import com.financeactive.tapestry.jersey.test.services.rest.app1.App1;
+import com.financeactive.tapestry.jersey.test.services.rest.app1.HelloWorld;
+import com.financeactive.tapestry.jersey.test.services.rest.app1.HelloWorldImpl;
+import com.financeactive.tapestry.jersey.test.services.rest.app2.App2;
+import com.financeactive.tapestry.jersey.test.services.rest.app2.Coucou;
 import org.apache.tapestry5.ioc.Configuration;
-import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.SubModule;
 
-import com.financeactive.tapestry.jersey.services.JerseyModule;
-import com.financeactive.tapestry.jersey.test.services.rest.HelloWorld;
-import com.financeactive.tapestry.jersey.test.services.rest.HelloWorldImpl;
+import javax.ws.rs.core.Application;
 
 @SubModule(JerseyModule.class)
 public class AppModule {
     
     public static void bind(ServiceBinder binder) {
         binder.bind(HelloWorld.class, HelloWorldImpl.class);
-    }
-    
-    public static void contributeJerseyRootResources(Configuration<Object> configuration,
-                                                     ObjectLocator objectLocator) {
-        configuration.add(objectLocator.getService(HelloWorld.class));
+        binder.bind(App1.class);
+        binder.bind(Coucou.class);
+        binder.bind(App2.class);
     }
 
+    public static void contributeJerseyApplications(Configuration<Application> configuration,
+                                                    App1 app1, App2 app2) {
+        configuration.add(app1);
+        configuration.add(app2);
+    }
 }

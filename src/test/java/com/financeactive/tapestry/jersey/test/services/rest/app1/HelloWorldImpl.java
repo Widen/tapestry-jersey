@@ -12,14 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.financeactive.tapestry.jersey.test.services.rest;
+package com.financeactive.tapestry.jersey.test.services.rest.app1;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
+public class HelloWorldImpl implements HelloWorld {
 
-@Path("/rest/helloworld")
-public interface HelloWorld {
-    @GET
-    public String getHello();
-
+    public String getHello() {
+        return "hello";
+    }
 }
