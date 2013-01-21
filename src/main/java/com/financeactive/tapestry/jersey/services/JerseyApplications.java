@@ -24,10 +24,10 @@ public class JerseyApplications {
         if (configuration != null) {
             for (Application application : configuration) {
                 ApplicationPath path = application.getClass().getAnnotation(ApplicationPath.class);
-                verify(path.value());
                 if (path == null) {
                     throw new IllegalArgumentException("You must set the ApplicationPath on all registered applications: " + application.getClass().getName());
                 }
+                verify(path.value());
                 applications.put(path.value(), new JerseyEndPoint(path.value(), application, tapestryRequestContext));
             }
         }
