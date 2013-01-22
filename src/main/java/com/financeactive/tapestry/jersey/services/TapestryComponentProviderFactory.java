@@ -9,7 +9,6 @@ import com.sun.jersey.core.spi.component.ioc.IoCManagedComponentProvider;
 import org.apache.tapestry5.ioc.AnnotationProvider;
 import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.internal.NullAnnotationProvider;
-import org.apache.tapestry5.ioc.services.MasterObjectProvider;
 
 public class TapestryComponentProviderFactory implements IoCComponentProviderFactory {
 
@@ -17,18 +16,15 @@ public class TapestryComponentProviderFactory implements IoCComponentProviderFac
 
     private final ObjectLocator objectLocator;
 
-    private final MasterObjectProvider objectProvider;
-
     public TapestryComponentProviderFactory(ObjectLocator objectLocator) {
         this.annotationProvider = new NullAnnotationProvider();
         this.objectLocator = objectLocator;
-        this.objectProvider = objectLocator.getService(MasterObjectProvider.class);
     }
 
     @Override
     public IoCComponentProvider getComponentProvider(Class<?> c) {
         if (isTapestryManaged(c)) {
-            return new ObjectLocatorComponentProvider<Object>(objectLocator, c);
+            return new ObjectLocatorComponentProvider<Object>(objectLocator, annotationProvider, c);
         } else if (isTapestryBuildable(c)) {
             return new AutoBuilderComponentProvider<Object>(objectLocator, c);
         }
@@ -42,7 +38,7 @@ public class TapestryComponentProviderFactory implements IoCComponentProviderFac
 
     boolean isTapestryManaged(Class<?> c) {
         try {
-            return objectProvider.provide(c, annotationProvider, objectLocator, false) != null;
+            return objectLocator.getObject(c, annotationProvider) != null;
         } catch (RuntimeException e) {
             return false;
         }
@@ -79,10 +75,13 @@ public class TapestryComponentProviderFactory implements IoCComponentProviderFac
 
         private final ObjectLocator objectLocator;
 
+        private final AnnotationProvider annotationProvider;
+
         private final Class<? extends T> type;
 
-        ObjectLocatorComponentProvider(ObjectLocator objectLocator, Class<? extends T> type) {
+        ObjectLocatorComponentProvider(ObjectLocator objectLocator, AnnotationProvider annotationProvider, Class<? extends T> type) {
             this.objectLocator = objectLocator;
+            this.annotationProvider = annotationProvider;
             this.type = type;
         }
 
@@ -94,7 +93,7 @@ public class TapestryComponentProviderFactory implements IoCComponentProviderFac
 
         @Override
         public Object getInstance() {
-            return objectLocator.getObject(type, null);
+            return objectLocator.getObject(type, annotationProvider);
         }
 
         @Override
