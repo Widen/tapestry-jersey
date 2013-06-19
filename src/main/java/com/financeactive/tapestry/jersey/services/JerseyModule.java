@@ -15,13 +15,22 @@
 package com.financeactive.tapestry.jersey.services;
 
 import org.apache.tapestry5.annotations.Service;
+import org.apache.tapestry5.ioc.ObjectLocator;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
+import org.apache.tapestry5.ioc.annotations.Contribute;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.InjectService;
+import org.apache.tapestry5.ioc.services.PipelineBuilder;
 import org.apache.tapestry5.services.HttpServletRequestFilter;
+import org.apache.tapestry5.services.HttpServletRequestHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 import java.util.logging.Handler;
 import java.util.logging.LogManager;
 
@@ -51,6 +60,7 @@ public class JerseyModule {
      * @param configuration
      * @param jerseyFilter
      */
+    @Contribute(HttpServletRequestHandler.class)
     public void contributeHttpServletRequestHandler(
             OrderedConfiguration<HttpServletRequestFilter> configuration,
             @Service("JerseyHttpServletRequestFilter") HttpServletRequestFilter jerseyFilter) {
@@ -60,6 +70,15 @@ public class JerseyModule {
                 "after:SecurityConfiguration",
                 "after:SecurityRequestFilter",
                 "before:EndOfRequest", "before:GZIP");
+    }
+
+    public JerseyRequestHandler buildJerseyRequestHandler(@InjectService("PipelineBuilder") PipelineBuilder builder,
+                                          @Inject ObjectLocator locator,
+                                          List<JerseyRequestFilter> configuration, Logger logger) {
+
+        JerseyRequestHandler terminator = locator.autobuild(JerseyHttpRequestFilter.Terminator.class);
+
+        return builder.build(logger, JerseyRequestHandler.class, JerseyRequestFilter.class, configuration, terminator);
     }
 
 }

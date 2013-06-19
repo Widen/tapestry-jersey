@@ -2,13 +2,13 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.financeactive.tapestry</groupId>
     <artifactId>tapestry-jersey</artifactId>
-    <version>2.0.2-SNAPSHOT</version>
+    <version>2.0.3-SNAPSHOT</version>
 
     <name>Tapestry-Jersey module</name>
 
 
     <properties>
-        <tapestry.version>5.3.2</tapestry.version>
+        <tapestry.version>5.3.7</tapestry.version>
         <jersey.version>1.12</jersey.version>
         <slf4j.version>1.6.4</slf4j.version>
     </properties>

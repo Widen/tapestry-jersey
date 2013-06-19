@@ -39,16 +39,10 @@ public class JerseyHttpRequestFilter implements HttpServletRequestFilter {
     private static final Logger LOG = LoggerFactory.getLogger(JerseyModule.class);
 
     @Inject
-    private RequestGlobals requestGlobals;
-
-    @Inject
-    private TapestrySessionFactory sessionFactory;
-
-    @Symbol(SymbolConstants.CHARSET)
-    private String applicationCharset;
-
-    @Inject
     private JerseyApplications applications;
+
+    @Inject
+    private JerseyRequestHandler jerseyHandler;
 
     @Override
     public boolean service(HttpServletRequest request, HttpServletResponse response, HttpServletRequestHandler handler)
@@ -56,9 +50,7 @@ public class JerseyHttpRequestFilter implements HttpServletRequestFilter {
 
         for (JerseyEndPoint endPoint : applications.getEndPoints()) {
             if (endPoint.accept(request.getServletPath())){
-                // make the request/response available in jersey managed services.
-                storeInToGlobals(request, response);
-                return endPoint.service(request.getServletPath());
+                return jerseyHandler.service(endPoint, request, response);
             }
         }
 
@@ -66,10 +58,29 @@ public class JerseyHttpRequestFilter implements HttpServletRequestFilter {
 
     }
 
-    private void storeInToGlobals(HttpServletRequest request, HttpServletResponse response) {
-        Request t5request = new RequestImpl(request, applicationCharset, sessionFactory);
-        Response t5response = new ResponseImpl(request, response);
-        requestGlobals.storeRequestResponse(t5request, t5response);
+    public static class Terminator implements JerseyRequestHandler {
+
+        @Inject
+        private RequestGlobals requestGlobals;
+
+        @Inject
+        private TapestrySessionFactory sessionFactory;
+
+        @Symbol(SymbolConstants.CHARSET)
+        private String applicationCharset;
+
+        @Override
+        public boolean service(JerseyEndPoint endpoint, HttpServletRequest request, HttpServletResponse response) throws IOException {
+            // make the request/response available in jersey managed services.
+            storeInToGlobals(request, response);
+            return endpoint.service(request.getServletPath());
+        }
+
+        private void storeInToGlobals(HttpServletRequest request, HttpServletResponse response) {
+            Request t5request = new RequestImpl(request, applicationCharset, sessionFactory);
+            Response t5response = new ResponseImpl(request, response);
+            requestGlobals.storeRequestResponse(t5request, t5response);
+        }
     }
 
 
