@@ -1,0 +1,10 @@
+<html>
+    <head><title>Jersey Test App</title></head>
+    <body>
+        <h1>Jersey Test App</h1>
+
+        <p><a href="/hello">Hello REST</a></p>
+        <p><a href="/goodbye">Goodbye REST</a></p>
+
+    </body>
+</html>

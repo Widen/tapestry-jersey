@@ -1,32 +1,5 @@
-target/
-lib/
-test-output/
-infinitest.filters
-
-# Fichiers idea #
-#################
-.idea/
-*.iml
-*.ipr
-*.iws
-*.ids
-
-# Fichiers eclipse #
-####################
-*.prefs
-.classpath
-.project
-
-# Fichiers OS #
-###############
+/output
+/.idea
+/*.iml
+/.gradle
 .DS_Store
-.DS_Store/
-*.db
-*.log
-*.~lock.*
-*.log.lck
-
-# Gradle #
-##########
-.gradle
-.gradle/

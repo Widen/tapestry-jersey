@@ -1,0 +1,59 @@
+package org.apache.tapestry5.services.jersey.rest;
+
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.SessionManager;
+import org.eclipse.jetty.server.nio.SelectChannelConnector;
+import org.eclipse.jetty.util.component.AbstractLifeCycle;
+import org.eclipse.jetty.util.component.LifeCycle;
+import org.eclipse.jetty.webapp.WebAppContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class JettyRunner
+{
+
+    private static final Logger log = LoggerFactory.getLogger(JettyRunner.class);
+
+
+    public static void main(String[] args)
+    {
+        try
+        {
+//            System.setProperty("http.proxyHost", "127.0.0.1");
+//            System.setProperty("http.proxyPort", "8888");
+//            System.setProperty("https.proxyHost", "127.0.0.1");
+//            System.setProperty("https.proxyPort", "8888");
+
+            Connector connector = new SelectChannelConnector();
+            connector.setPort(8080);
+
+            Server server = new Server();
+            server.setConnectors(new Connector[] { connector });
+
+            WebAppContext context = new WebAppContext();
+            context.setContextPath("/");
+            context.setWar("src/test/webapp");
+            context.setInitParameter(SessionManager.__CheckRemoteSessionEncoding, "true"); // Stops Jetty from adding 'jsessionid' URL rewriting into non-local URLs (e.g. Google OpenId redirects)
+
+            server.setHandler(context);
+
+            server.addLifeCycleListener(new AbstractLifeCycle.AbstractLifeCycleListener()
+            {
+                @Override
+                public void lifeCycleStarted(LifeCycle event)
+                {
+                    log.warn("Jetty ready to accept requests...");
+                }
+            });
+
+            server.start();
+            server.join();
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException("Error launching Jetty", e);
+        }
+    }
+
+}
