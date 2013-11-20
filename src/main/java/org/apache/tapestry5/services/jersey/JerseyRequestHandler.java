@@ -21,6 +21,6 @@ import javax.servlet.http.HttpServletResponse;
 public interface JerseyRequestHandler
 {
 
-    boolean service(JerseyEndpointY endpoint, HttpServletRequest request, HttpServletResponse response) throws IOException;
+    boolean service(JerseyEndpoint endpoint, HttpServletRequest request, HttpServletResponse response) throws IOException;
 
 }
