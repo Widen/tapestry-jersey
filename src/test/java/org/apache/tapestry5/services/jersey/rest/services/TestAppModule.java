@@ -30,7 +30,7 @@ import org.apache.tapestry5.services.jersey.rest.app2.ColorsApp;
 import org.apache.tapestry5.services.jersey.rest.app2.ColorsResource;
 
 @SubModule(JerseyModule.class)
-public class AppModule
+public class TestAppModule
 {
 
     public static void bind(ServiceBinder binder)

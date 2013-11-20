@@ -123,12 +123,12 @@ public class JerseyEndpoint
         HttpServletResponse response = requestContext.getHttpServletResponse();
         try
         {
-            log.debug("Servicing JAX-WS request for '{}'", requestUrl);
+            log.debug("Servicing JAX-RS request for '{}'", requestUrl);
             servletContainer.doFilter(request, response, END_OF_CHAIN);
         }
         catch (Throwable e)
         {
-            log.error("Status code {} returned to client for JAX-WS request '{}'", response.getStatus(), requestUrl, e);
+            log.error("Status code {} returned to client for JAX-RS request '{}'", response.getStatus(), requestUrl, e);
         }
 
         return true;
