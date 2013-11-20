@@ -34,10 +34,10 @@ import org.glassfish.jersey.servlet.ServletProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JerseyEndpoint
+public class JerseyEndpointY
 {
 
-    private static final Logger log = LoggerFactory.getLogger(JerseyEndpoint.class);
+    private static final Logger log = LoggerFactory.getLogger(JerseyEndpointY.class);
 
     private String path;
 
@@ -49,7 +49,7 @@ public class JerseyEndpoint
 
     private static final FilterChain END_OF_CHAIN = new EndOfChainFilterChain();
 
-    public JerseyEndpoint(String path, Application application, JerseyTapestryRequestContext requestContext)
+    public JerseyEndpointY(String path, Application application, JerseyTapestryRequestContext requestContext)
     {
         this.path = path;
         this.application = application;

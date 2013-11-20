@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 public class JerseyApplications
 {
 
-    private Map<String, JerseyEndpoint> endpoints = new ConcurrentHashMap<String, JerseyEndpoint>();
+    private Map<String, JerseyEndpointY> endpoints = new ConcurrentHashMap<String, JerseyEndpointY>();
 
     private static final Logger log = LoggerFactory.getLogger(JerseyApplications.class);
 
@@ -47,14 +47,14 @@ public class JerseyApplications
                 log.info("Assigning path prefix '{}' to JAX-RS application {}", path.value(), application.getClass().getName());
 
                 verify(application, path.value());
-                endpoints.put(path.value(), new JerseyEndpoint(path.value(), application, jerseyTapestryRequestContext));
+                endpoints.put(path.value(), new JerseyEndpointY(path.value(), application, jerseyTapestryRequestContext));
             }
         }
     }
 
     private void verify(Application app, String path)
     {
-        for (JerseyEndpoint endpoint : endpoints.values())
+        for (JerseyEndpointY endpoint : endpoints.values())
         {
             if (endpoint.getPath().equals(path))
             {
@@ -63,7 +63,7 @@ public class JerseyApplications
         }
     }
 
-    public Collection<JerseyEndpoint> getEndpoints()
+    public Collection<JerseyEndpointY> getEndpoints()
     {
         return endpoints.values();
     }

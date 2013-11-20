@@ -51,7 +51,7 @@ public class JerseyHttpServletRequestFilter implements HttpServletRequestFilter
     @Override
     public boolean service(HttpServletRequest request, HttpServletResponse response, HttpServletRequestHandler handler) throws IOException
     {
-        for (JerseyEndpoint endPoint : applications.getEndpoints())
+        for (JerseyEndpointY endPoint : applications.getEndpoints())
         {
             if (endPoint.accept(request.getServletPath()))
             {
@@ -76,7 +76,7 @@ public class JerseyHttpServletRequestFilter implements HttpServletRequestFilter
         private String applicationCharset;
 
         @Override
-        public boolean service(JerseyEndpoint endpoint, HttpServletRequest request, HttpServletResponse response) throws IOException
+        public boolean service(JerseyEndpointY endpoint, HttpServletRequest request, HttpServletResponse response) throws IOException
         {
             // make the request/response available in jersey managed services.
             storeInToGlobals(request, response);
