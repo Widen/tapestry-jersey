@@ -44,7 +44,7 @@ public class JerseyApplications
                     throw new IllegalArgumentException("No @ApplicationPath configured for application " + application.getClass().getName());
                 }
 
-                log.info("Assigning path prefix '{}' to JAX-WS application {}", path.value(), application.getClass().getName());
+                log.info("Assigning path prefix '{}' to JAX-RS application {}", path.value(), application.getClass().getName());
 
                 verify(application, path.value());
                 endpoints.put(path.value(), new JerseyEndpoint(path.value(), application, jerseyTapestryRequestContext));
@@ -58,7 +58,7 @@ public class JerseyApplications
         {
             if (endpoint.getPath().equals(path))
             {
-                throw new RuntimeException(String.format("Path '%s' has already been assigned to the JAX-WS application %s", path, app.getClass().getName()));
+                throw new RuntimeException(String.format("Path '%s' has already been assigned to the JAX-RS application %s", path, app.getClass().getName()));
             }
         }
     }

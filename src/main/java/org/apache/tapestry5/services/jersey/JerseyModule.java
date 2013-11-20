@@ -53,7 +53,7 @@ public class JerseyModule
     @Contribute(HttpServletRequestHandler.class)
     public void contributeHttpServletRequestHandler(OrderedConfiguration<HttpServletRequestFilter> configuration, @Local HttpServletRequestFilter jerseyFilter)
     {
-        log.info("Contributing Jersey JAX-WS as a HTTP request filter...");
+        log.info("Contributing Jersey JAX-RS as a HTTP request filter...");
 
         configuration.add("JerseyFilter", jerseyFilter,
                 "after:StoreIntoGlobals",
