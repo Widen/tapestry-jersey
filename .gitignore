@@ -2,5 +2,6 @@
 /.idea
 /*.iml
 /.gradle
+/out
 .DS_Store
 gradle.properties
