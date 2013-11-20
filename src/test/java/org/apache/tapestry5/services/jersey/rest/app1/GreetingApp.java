@@ -21,6 +21,7 @@ import javax.ws.rs.core.Application;
 import com.google.common.collect.Sets;
 import org.apache.tapestry5.services.jersey.rest.app1.resources.GoodbyeResource;
 import org.apache.tapestry5.services.jersey.rest.app1.resources.HelloResource;
+import org.glassfish.jersey.filter.LoggingFilter;
 
 @ApplicationPath("/api")
 public class GreetingApp extends Application
@@ -39,7 +40,7 @@ public class GreetingApp extends Application
     @Override
     public Set<Object> getSingletons()
     {
-        return Sets.newHashSet(helloResource, goodbyeResource);
+        return Sets.newHashSet(helloResource, goodbyeResource, new LoggingFilter());
     }
 
 }
