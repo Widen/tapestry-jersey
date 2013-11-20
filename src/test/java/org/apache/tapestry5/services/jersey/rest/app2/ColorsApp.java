@@ -21,6 +21,7 @@ import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.glassfish.jersey.filter.LoggingFilter;
 
 @ApplicationPath("/api2")
 public class ColorsApp extends Application
@@ -29,10 +30,12 @@ public class ColorsApp extends Application
     @Inject
     private ColorsResource colorsResource;
 
+    private ImageResource imageResource = new ImageResource();
+
     @Override
     public Set<Object> getSingletons()
     {
-        return new HashSet<Object>(Arrays.asList(colorsResource));
+        return new HashSet<Object>(Arrays.asList(colorsResource, imageResource, new LoggingFilter()));
     }
 
 }
