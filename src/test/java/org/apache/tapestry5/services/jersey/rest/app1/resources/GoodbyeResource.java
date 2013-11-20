@@ -12,17 +12,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.services.jersey.rest.app1;
+package org.apache.tapestry5.services.jersey.rest.app1.resources;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
-@Path("/hello")
-public interface HelloService
+import org.apache.tapestry5.services.jersey.rest.app1.entities.Greeting;
+import org.apache.tapestry5.services.jersey.rest.app1.services.SimpleService;
+
+@Path("/goodbye")
+public class GoodbyeResource
 {
+
+    private final SimpleService simpleService;
+
+    public GoodbyeResource(SimpleService simpleService)
+    {
+        this.simpleService = simpleService;
+    }
+
     @GET
-    @Produces("text/plain")
-    public String getHello();
+    @Produces(MediaType.APPLICATION_JSON)
+    public Greeting doIt()
+    {
+        return simpleService.getGreeting("Doris", "Schutt", "The answer to life the universe and everything...");
+    }
 
 }

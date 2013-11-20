@@ -16,12 +16,11 @@ package org.apache.tapestry5.services.jersey;
 
 import java.util.List;
 
-import org.apache.tapestry5.annotations.Service;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.ioc.annotations.Contribute;
-import org.apache.tapestry5.ioc.annotations.InjectService;
+import org.apache.tapestry5.ioc.annotations.Local;
 import org.apache.tapestry5.ioc.services.PipelineBuilder;
 import org.apache.tapestry5.services.HttpServletRequestFilter;
 import org.apache.tapestry5.services.HttpServletRequestHandler;
@@ -43,7 +42,7 @@ public class JerseyModule
 
     public static void bind(ServiceBinder binder)
     {
-        binder.bind(TapestryRequestContext.class);
+        binder.bind(JerseyTapestryRequestContext.class);
         binder.bind(JerseyApplications.class);
         binder.bind(HttpServletRequestFilter.class, JerseyHttpServletRequestFilter.class).withSimpleId();
     }
@@ -52,9 +51,10 @@ public class JerseyModule
      * Added {@link JerseyHttpServletRequestFilter} to the very beginning of servlet filter chain.
      */
     @Contribute(HttpServletRequestHandler.class)
-    public void contributeHttpServletRequestHandler(OrderedConfiguration<HttpServletRequestFilter> configuration, @Service("JerseyHttpServletRequestFilter") HttpServletRequestFilter jerseyFilter)
+    public void contributeHttpServletRequestHandler(OrderedConfiguration<HttpServletRequestFilter> configuration, @Local HttpServletRequestFilter jerseyFilter)
     {
-        log.info("Integrating Jersey as HTTP request filter.");
+        log.info("Contributing Jersey JAX-WS as a HTTP request filter...");
+
         configuration.add("JerseyFilter", jerseyFilter,
                 "after:StoreIntoGlobals",
                 "after:SecurityConfiguration",
@@ -63,7 +63,7 @@ public class JerseyModule
                 "before:GZIP");
     }
 
-    public JerseyRequestHandler buildJerseyRequestHandler(@InjectService("PipelineBuilder") PipelineBuilder builder, ServiceResources serviceResources, List<JerseyRequestFilter> configuration, Logger logger)
+    public JerseyRequestHandler buildJerseyRequestHandler(PipelineBuilder builder, ServiceResources serviceResources, List<JerseyRequestFilter> configuration, Logger logger)
     {
         JerseyRequestHandler terminator = serviceResources.autobuild(JerseyHttpServletRequestFilter.Terminator.class);
         return builder.build(logger, JerseyRequestHandler.class, JerseyRequestFilter.class, configuration, terminator);

@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 public class JerseyHttpServletRequestFilter implements HttpServletRequestFilter
 {
 
-    private static final Logger log = LoggerFactory.getLogger(JerseyModule.class);
+    private static final Logger log = LoggerFactory.getLogger(JerseyHttpServletRequestFilter.class);
 
     @Inject
     private JerseyApplications applications;
@@ -51,7 +51,7 @@ public class JerseyHttpServletRequestFilter implements HttpServletRequestFilter
     @Override
     public boolean service(HttpServletRequest request, HttpServletResponse response, HttpServletRequestHandler handler) throws IOException
     {
-        for (JerseyEndpoint endPoint : applications.getEndPoints())
+        for (JerseyEndpoint endPoint : applications.getEndpoints())
         {
             if (endPoint.accept(request.getServletPath()))
             {
@@ -78,8 +78,6 @@ public class JerseyHttpServletRequestFilter implements HttpServletRequestFilter
         @Override
         public boolean service(JerseyEndpoint endpoint, HttpServletRequest request, HttpServletResponse response) throws IOException
         {
-            log.info("Servicing Terminator request '{}'", request.getRequestURL());
-
             // make the request/response available in jersey managed services.
             storeInToGlobals(request, response);
             return endpoint.service(request.getServletPath());

@@ -12,8 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.services.jersey.rest.pages;
+package org.apache.tapestry5.services.jersey.rest.app1.services;
 
-public class Index
+import org.apache.tapestry5.services.jersey.rest.app1.entities.Greeting;
+
+public interface SimpleService
 {
+
+    public Greeting getGreeting(String first, String last, String msg);
+
 }

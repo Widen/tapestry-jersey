@@ -1,3 +1,17 @@
+// Copyright 2007, 2008, 2009 The Apache Software Foundation
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package org.apache.tapestry5.services.jersey;
 
 import java.io.IOException;
@@ -9,50 +23,45 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Application;
 
-import org.apache.tapestry5.TapestryFilter;
-import org.apache.tapestry5.ioc.ObjectLocator;
+import com.google.common.base.Preconditions;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletContainer;
 import org.glassfish.jersey.servlet.ServletProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- *
- */
 public class JerseyEndpoint
 {
 
-    private static final Logger log = LoggerFactory.getLogger(JerseyModule.class);
+    private static final Logger log = LoggerFactory.getLogger(JerseyEndpoint.class);
 
     private String path;
 
     private Application application;
 
-    private ObjectLocator objectLocator;
+    private JerseyTapestryRequestContext requestContext;
 
-    private TapestryRequestContext requestContext;
-
-    private ServletContainer jaxwsContainer;
+    private ServletContainer servletContainer;
 
     private static final FilterChain END_OF_CHAIN = new EndOfChainFilterChain();
 
-    public JerseyEndpoint(String path, Application application, TapestryRequestContext requestContext)
+    public JerseyEndpoint(String path, Application application, JerseyTapestryRequestContext requestContext)
     {
         this.path = path;
         this.application = application;
-        this.objectLocator = (ObjectLocator) requestContext.getApplicationGlobals().getContext().getAttribute(TapestryFilter.REGISTRY_CONTEXT_NAME);
         this.requestContext = requestContext;
         try
         {
-            buildContainer(requestContext.getApplicationGlobals().getServletContext());
-            log.info("Jersey application {} mounted at path {}", application.getClass().getName(), path);
+            ServletContext servletContext = Preconditions.checkNotNull(requestContext.getApplicationGlobals().getServletContext(), "ServletContext");
+            buildContainer(servletContext);
         }
         catch (ServletException e)
         {
-            throw new RuntimeException("Failed to build JAX-RS container: " + e.getMessage(), e);
+            throw new RuntimeException("Error building JAX-RS servlet container: " + e.getMessage(), e);
         }
     }
 
@@ -68,20 +77,12 @@ public class JerseyEndpoint
 
     private void buildContainer(final ServletContext servletContext) throws ServletException
     {
-        if (servletContext == null)
-        {
-            log.warn("ServletContext is null. Jersey endpoint will not be mounted.");
-            return;
-        }
-
-        log.info("Building container for {}", application.getClass().getName());
-
         final ResourceConfig config = ResourceConfig.forApplication(application);
         config.property(ServletProperties.FILTER_CONTEXT_PATH, path);
         config.register(GsonMessageBodyHandler.class);
 
-        jaxwsContainer = new ServletContainer(config);
-        jaxwsContainer.init(new FilterConfig()
+        servletContainer = new ServletContainer(config);
+        servletContainer.init(new FilterConfig()
         {
             @Override
             public ServletContext getServletContext()
@@ -109,37 +110,33 @@ public class JerseyEndpoint
         });
     }
 
+    public boolean service(String requestPath) throws IOException
+    {
+        if (!accept(requestPath))
+        {
+            throw new IllegalArgumentException(String.format("Invalid path '%s'; must start with '%s'", requestPath, path));
+        }
+
+        HttpServletRequest request = requestContext.getHttpServletRequest();
+        String requestUrl = request.getRequestURL() + (request.getQueryString() == null ? "" : "?" + request.getQueryString());
+
+        HttpServletResponse response = requestContext.getHttpServletResponse();
+        try
+        {
+            log.debug("Servicing JAX-WS request for '{}'", requestUrl);
+            servletContainer.doFilter(request, response, END_OF_CHAIN);
+        }
+        catch (Throwable e)
+        {
+            log.error("Status code {} returned to client for JAX-WS request '{}'", response.getStatus(), requestUrl, e);
+        }
+
+        return true;
+    }
+
     public boolean accept(String servletPath)
     {
         return servletPath.startsWith(path);
-    }
-
-    public boolean service(String requestPath) throws IOException
-    {
-        if (jaxwsContainer == null)
-        {
-            log.warn("No jaxws container. Skip processing.");
-            return false;
-        }
-
-        if (!accept(requestPath))
-        {
-            throw new IllegalArgumentException("This endpoint does not accept path " + requestPath);
-        }
-
-        try
-        {
-            log.info("Servicing JAXWS container request for {}", requestContext.getHttpServletRequest().getRequestURL());
-
-            this.jaxwsContainer.doFilter(requestContext.getHttpServletRequest(), requestContext.getHttpServletResponse(), END_OF_CHAIN);
-            return true;
-        }
-        catch (ServletException e)
-        {
-            log.error("Jersey failed to handler the request", e);
-            //TODO : write a response!
-            return true;
-        }
     }
 
     private static final class EndOfChainFilterChain implements FilterChain

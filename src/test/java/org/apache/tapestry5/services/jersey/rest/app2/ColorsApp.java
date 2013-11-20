@@ -12,8 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.services.jersey.rest.pages;
+package org.apache.tapestry5.services.jersey.rest.app2;
 
-public class Index
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import javax.ws.rs.ApplicationPath;
+import javax.ws.rs.core.Application;
+
+import org.apache.tapestry5.ioc.annotations.Inject;
+
+@ApplicationPath("/api2")
+public class ColorsApp extends Application
 {
+
+    @Inject
+    private ColorsResource colorsResource;
+
+    @Override
+    public Set<Object> getSingletons()
+    {
+        return new HashSet<Object>(Arrays.asList(colorsResource));
+    }
+
 }

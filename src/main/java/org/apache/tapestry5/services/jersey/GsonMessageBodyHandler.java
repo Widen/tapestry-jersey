@@ -43,7 +43,6 @@ public class GsonMessageBodyHandler<T> implements MessageBodyWriter<T>, MessageB
 
     private final Gson gson;
 
-
     public GsonMessageBodyHandler()
     {
         GsonBuilder builder = new GsonBuilder();
