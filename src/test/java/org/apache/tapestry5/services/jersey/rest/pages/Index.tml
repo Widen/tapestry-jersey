@@ -4,7 +4,7 @@
 
         <h1>Jersey Test App</h1>
 
-        <p><a href="/api/hello">App1 - Hello (simple interface resource; TODO: get T5 live class reloading working)</a></p>
+        <p><a href="/api/hello/mary?lastname=meow&amp;catch-phrase=Really,+you+want+to+do+this?">App1 - Hello (simple interface resource; TODO: get T5 live class reloading working)</a></p>
         <p><a href="/api/goodbye">App1 - Goodbye (T5 constructor injection into GoodbyeResource)</a></p>
         <p><a href="/api2/color">App2 - Colors (T5 @Inject into ColorsResource)</a></p>
 

@@ -20,9 +20,9 @@ public class HelloResourceImpl implements HelloResource
 {
 
     @Override
-    public Greeting getHelloResponse()
+    public Greeting getHelloResponse(String name, String last, String phrase)
     {
-        return new Greeting("Johnny", "Appleseed", "An apple a day keeps...");
+        return new Greeting(name, last, phrase);
     }
 
 }
