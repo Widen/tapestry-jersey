@@ -155,7 +155,7 @@ public class GsonMessageBodyHandler<T> implements MessageBodyWriter<T>, MessageB
         @Override
         public boolean shouldSkipField(FieldAttributes field)
         {
-            return field.getAnnotation(JsonIgnore.class) != null;
+            return field.getAnnotation(JerseyJsonIgnore.class) != null;
         }
     }
 

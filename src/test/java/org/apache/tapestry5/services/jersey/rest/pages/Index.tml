@@ -7,6 +7,8 @@
         <p><a href="/api/hello/mary?lastname=meow&amp;catch-phrase=Really,+you+want+to+do+this?">App1 - Hello (simple interface resource; TODO: get T5 live class reloading working)</a></p>
         <p><a href="/api/goodbye">App1 - Goodbye (T5 constructor injection into GoodbyeResource)</a></p>
         <p><a href="/api2/color">App2 - Colors (T5 @Inject into ColorsResource)</a></p>
+        <p><a href="/api2/color/red">App2 - Colors (Red, <a href="/api2/color/list">list</a>) (T5 ValueEncoder)</a></p>
+        <p><a href="/api2/color/ohno">App2 - Exception</a></p>
         <p><a href="/api2/image">App2 - Image (custom Response)</a></p>
 
     </body>

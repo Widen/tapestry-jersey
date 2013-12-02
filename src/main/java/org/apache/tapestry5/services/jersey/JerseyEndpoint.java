@@ -49,7 +49,7 @@ public class JerseyEndpoint
 
     private static final FilterChain END_OF_CHAIN = new EndOfChainFilterChain();
 
-    public JerseyEndpoint(String path, Application application, JerseyTapestryRequestContext requestContext)
+    public JerseyEndpoint(String path, Application application, JerseyTapestryRequestContext requestContext, Object... otherServices)
     {
         this.path = path;
         this.application = application;
@@ -57,7 +57,7 @@ public class JerseyEndpoint
         try
         {
             ServletContext servletContext = Preconditions.checkNotNull(requestContext.getApplicationGlobals().getServletContext(), "ServletContext");
-            buildContainer(servletContext);
+            buildContainer(servletContext, otherServices);
         }
         catch (ServletException e)
         {
@@ -75,11 +75,11 @@ public class JerseyEndpoint
         return application;
     }
 
-    private void buildContainer(final ServletContext servletContext) throws ServletException
+    private void buildContainer(final ServletContext servletContext, final Object... otherServices) throws ServletException
     {
         final ResourceConfig config = ResourceConfig.forApplication(application);
         config.property(ServletProperties.FILTER_CONTEXT_PATH, path);
-        config.register(GsonMessageBodyHandler.class);
+        config.registerInstances(otherServices);
 
         servletContainer = new ServletContainer(config);
         servletContainer.init(new FilterConfig()

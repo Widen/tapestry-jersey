@@ -44,6 +44,8 @@ public class JerseyModule
     {
         binder.bind(JerseyTapestryRequestContext.class);
         binder.bind(JerseyApplications.class);
+        binder.bind(JerseyTapestryParamConverterProvider.class);
+        binder.bind(GsonMessageBodyHandler.class);
         binder.bind(HttpServletRequestFilter.class, JerseyHttpServletRequestFilter.class).withSimpleId();
     }
 

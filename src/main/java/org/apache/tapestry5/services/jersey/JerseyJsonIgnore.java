@@ -23,6 +23,6 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface JsonIgnore
+public @interface JerseyJsonIgnore
 {
 }

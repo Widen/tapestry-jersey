@@ -20,7 +20,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
-import org.apache.tapestry5.ioc.annotations.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +30,10 @@ public class JerseyApplications
 
     private static final Logger log = LoggerFactory.getLogger(JerseyApplications.class);
 
-    public JerseyApplications(Collection<Application> configuration, @Inject JerseyTapestryRequestContext jerseyTapestryRequestContext)
+    public JerseyApplications(Collection<Application> configuration,
+                              JerseyTapestryRequestContext jerseyTapestryRequestContext,
+                              GsonMessageBodyHandler gsonMessageBodyHandler,
+                              JerseyTapestryParamConverterProvider paramConverterProvider)
     {
         if (configuration != null)
         {
@@ -47,7 +49,7 @@ public class JerseyApplications
                 log.info("Assigning path prefix '{}' to JAX-RS application {}", path.value(), application.getClass().getName());
 
                 verify(application, path.value());
-                endpoints.put(path.value(), new JerseyEndpoint(path.value(), application, jerseyTapestryRequestContext));
+                endpoints.put(path.value(), new JerseyEndpoint(path.value(), application, jerseyTapestryRequestContext, gsonMessageBodyHandler, paramConverterProvider));
             }
         }
     }
