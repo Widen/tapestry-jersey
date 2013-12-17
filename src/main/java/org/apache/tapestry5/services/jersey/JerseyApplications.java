@@ -30,6 +30,7 @@ public class JerseyApplications
 
     private static final Logger log = LoggerFactory.getLogger(JerseyApplications.class);
 
+    // TODO: @Provider classes should be added automatically
     public JerseyApplications(Collection<Application> configuration,
                               JerseyTapestryRequestContext jerseyTapestryRequestContext,
                               GsonMessageBodyHandler gsonMessageBodyHandler,

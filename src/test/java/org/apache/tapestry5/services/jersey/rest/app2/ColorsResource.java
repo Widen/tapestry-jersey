@@ -3,6 +3,7 @@ package org.apache.tapestry5.services.jersey.rest.app2;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -10,8 +11,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import com.google.common.collect.Lists;
+import org.apache.tapestry5.services.jersey.JerseyStatusCodeResponseException;
 
-@Path("/color")
+@Path("/colors")
 public class ColorsResource
 {
 
@@ -46,10 +48,17 @@ public class ColorsResource
     }
 
     @GET
-    @Path("/ohno")
+    @Path("/exception")
     public String demoException()
     {
         throw new RuntimeException("Boom");
+    }
+
+    @GET
+    @Path("/customstatusexception")
+    public String demoCustomStatusException()
+    {
+        throw new JerseyStatusCodeResponseException("This is a custom message", HttpServletResponse.SC_EXPECTATION_FAILED);
     }
 
 }

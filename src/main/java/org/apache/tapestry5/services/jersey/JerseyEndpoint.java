@@ -79,6 +79,8 @@ public class JerseyEndpoint
     {
         final ResourceConfig config = ResourceConfig.forApplication(application);
         config.property(ServletProperties.FILTER_CONTEXT_PATH, path);
+        config.registerClasses(JerseyStatusCodeResponseExceptionConverter.class);
+
         config.registerInstances(otherServices);
 
         servletContainer = new ServletContainer(config);

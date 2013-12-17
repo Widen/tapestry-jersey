@@ -14,7 +14,7 @@ repositories {
 
 uploadArchives {
     repositories.mavenDeployer {
-        repository(url: 'https://widen.artifactoryonline.com/widen/libs-widen-public') {
+        repository(url: 'https://widen.artifactoryonline.com/widen/libs-snapshots-thirdparty') {
             authentication(userName: USER, password: PASSWORD)
         }
     }
@@ -32,10 +32,10 @@ configurations {
 dependencies {
     ext.slf4jVersion = '1.7.5'
     compile group: 'org.slf4j', name: 'slf4j-api', version: slf4jVersion
+    compile group: 'org.slf4j', name: 'log4j-over-slf4j', version: slf4jVersion
+    compile group: 'org.slf4j', name: 'jcl-over-slf4j', version: slf4jVersion
+    compile group: 'org.slf4j', name: 'jul-to-slf4j', version: slf4jVersion
     testCompile group: 'org.slf4j', name: 'slf4j-simple', version: slf4jVersion
-    testCompile group: 'org.slf4j', name: 'jcl-over-slf4j', version: slf4jVersion
-    testCompile group: 'org.slf4j', name: 'jul-to-slf4j', version: slf4jVersion
-    testCompile group: 'org.slf4j', name: 'log4j-over-slf4j', version: slf4jVersion
 
     compile group: 'joda-time', name: 'joda-time', version: '2.1'
 
