@@ -20,8 +20,13 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
@@ -42,7 +47,10 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import com.google.gson.JsonSyntaxException;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.ISODateTimeFormat;
 
 /**
  * https://github.com/SAP/cloud-paulpredicts/blob/master/src/main/java/com/sap/pto/services/util/GsonMessageBodyHandler.java
@@ -59,8 +67,8 @@ public class GsonMessageBodyHandler<T> implements MessageBodyWriter<T>, MessageB
     public GsonMessageBodyHandler()
     {
         GsonBuilder builder = new GsonBuilder();
-        builder.setDateFormat("yyyy-MM-dd'T'HH:mm:ss Z");
         builder.registerTypeAdapter(DateTime.class, new DateTimeTypeConverter());
+        builder.registerTypeAdapter(Date.class, new GmtDateTypeAdapter());
         builder.setPrettyPrinting();
         builder.addSerializationExclusionStrategy(new GsonExclusionStrategy());
 
@@ -120,12 +128,52 @@ public class GsonMessageBodyHandler<T> implements MessageBodyWriter<T>, MessageB
         }
     }
 
+    private static class GmtDateTypeAdapter implements JsonSerializer<Date>, JsonDeserializer<Date>
+    {
+        private final DateFormat dateFormat;
+
+        private GmtDateTypeAdapter()
+        {
+            dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
+            dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        }
+
+        @Override
+        public synchronized JsonElement serialize(Date date, Type type,
+                                                  JsonSerializationContext jsonSerializationContext)
+        {
+            synchronized (dateFormat)
+            {
+                String dateFormatAsString = dateFormat.format(date);
+                return new JsonPrimitive(dateFormatAsString);
+            }
+        }
+
+        @Override
+        public synchronized Date deserialize(JsonElement jsonElement, Type type,
+                                             JsonDeserializationContext jsonDeserializationContext)
+        {
+            try
+            {
+                synchronized (dateFormat)
+                {
+                    return dateFormat.parse(jsonElement.getAsString());
+                }
+            }
+            catch (ParseException e)
+            {
+                throw new JsonSyntaxException(jsonElement.getAsString(), e);
+            }
+        }
+    }
+
     private static class DateTimeTypeConverter implements JsonSerializer<DateTime>, JsonDeserializer<DateTime>
     {
         @Override
         public JsonElement serialize(DateTime src, Type srcType, JsonSerializationContext context)
         {
-            return new JsonPrimitive(src.toString());
+            DateTime utc = new DateTime(src, DateTimeZone.UTC);
+            return new JsonPrimitive(ISODateTimeFormat.dateTimeNoMillis().print(utc));
         }
 
         @Override

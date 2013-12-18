@@ -14,40 +14,53 @@
 
 package org.apache.tapestry5.services.jersey.rest.app1.entities;
 
+import java.util.Date;
+
+import com.google.gson.annotations.SerializedName;
+import org.joda.time.DateTime;
+
 public class Greeting
 {
 
-    private String first_name;
+    @SerializedName("first_name")
+    private String firstName;
 
-    private String last_name;
+    @SerializedName("last_name")
+    private String lastName;
 
     private String quote;
 
-    public Greeting(String first_name, String last_name, String quote)
+    private Date javaDate;
+
+    private DateTime jodaTime;
+
+    public Greeting(String firstName, String lastName, String quote)
     {
-        this.first_name = first_name;
-        this.last_name = last_name;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.quote = quote;
+        this.javaDate = new Date();
+        this.jodaTime = new DateTime(this.javaDate);
     }
 
-    public String getFirst_name()
+    public String getFirstName()
     {
-        return first_name;
+        return firstName;
     }
 
-    public void setFirst_name(String first_name)
+    public void setFirstName(String firstName)
     {
-        this.first_name = first_name;
+        this.firstName = firstName;
     }
 
-    public String getLast_name()
+    public String getLastName()
     {
-        return last_name;
+        return lastName;
     }
 
-    public void setLast_name(String last_name)
+    public void setLastName(String lastName)
     {
-        this.last_name = last_name;
+        this.lastName = lastName;
     }
 
     public String getQuote()
@@ -58,6 +71,26 @@ public class Greeting
     public void setQuote(String quote)
     {
         this.quote = quote;
+    }
+
+    public Date getJavaDate()
+    {
+        return javaDate;
+    }
+
+    public void setJavaDate(Date javaDate)
+    {
+        this.javaDate = javaDate;
+    }
+
+    public DateTime getJodaTime()
+    {
+        return jodaTime;
+    }
+
+    public void setJodaTime(DateTime jodaTime)
+    {
+        this.jodaTime = jodaTime;
     }
 
 }
