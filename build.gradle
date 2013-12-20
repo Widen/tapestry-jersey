@@ -2,7 +2,7 @@ apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'maven'
 
-group = 'org.tapestry'
+group = 'org.apache.tapestry'
 version = '2.2.0-SNAPSHOT'
 
 sourceCompatibility = 1.7
