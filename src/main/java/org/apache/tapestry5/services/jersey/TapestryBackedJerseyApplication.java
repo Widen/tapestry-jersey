@@ -29,6 +29,7 @@ import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
 import com.google.common.base.Preconditions;
+import org.apache.tapestry5.services.jersey.internal.ContainerRequestContextProviderFilter;
 import org.apache.tapestry5.services.jersey.internal.JerseyTapestryRequestContext;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletContainer;
@@ -43,15 +44,18 @@ public abstract class TapestryBackedJerseyApplication extends Application
 
     private final String appPath;
 
-    private JerseyTapestryRequestContext requestContext;
+    private final JerseyTapestryRequestContext requestContext;
+
+    private final ContainerRequestContextProvider containerRequestContextProvider;
 
     private ServletContainer servletContainer;
 
     private static final FilterChain END_OF_CHAIN = new EndOfChainFilterChain();
 
-    public TapestryBackedJerseyApplication(JerseyTapestryRequestContext requestContext)
+    public TapestryBackedJerseyApplication(JerseyTapestryRequestContext requestContext, ContainerRequestContextProvider containerRequestContextProvider)
     {
         this.requestContext = requestContext;
+        this.containerRequestContextProvider = containerRequestContextProvider;
 
         ApplicationPath path = getClass().getAnnotation(ApplicationPath.class);
         if (path == null)
@@ -72,7 +76,9 @@ public abstract class TapestryBackedJerseyApplication extends Application
             config.property(ServletProperties.FILTER_CONTEXT_PATH, getAppPath());
 
             config.registerClasses(getClasses());
+
             config.registerInstances(getSingletons());
+            config.registerInstances(new ContainerRequestContextProviderFilter(containerRequestContextProvider));
 
             servletContainer = new ServletContainer(config);
             servletContainer.init(new FilterConfig()

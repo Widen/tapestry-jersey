@@ -11,6 +11,7 @@
         <p><a href="/api2/colors/exception">App2 - Exception</a></p>
         <p><a href="/api2/colors/customstatusexception">App2 - Custom Status Code Exception</a></p>
         <p><a href="/api2/image">App2 - Image (custom Response)</a></p>
+        <p><a href="/api2/colors/debugdump">App2 - Debug Dump ContainerRequestContext</a></p>
 
     </body>
 </html>

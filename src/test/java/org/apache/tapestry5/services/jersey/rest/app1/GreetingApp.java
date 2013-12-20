@@ -19,6 +19,7 @@ import java.util.Set;
 import javax.ws.rs.ApplicationPath;
 
 import com.google.common.collect.Sets;
+import org.apache.tapestry5.services.jersey.ContainerRequestContextProvider;
 import org.apache.tapestry5.services.jersey.TapestryBackedJerseyApplication;
 import org.apache.tapestry5.services.jersey.internal.JerseyTapestryRequestContext;
 import org.apache.tapestry5.services.jersey.providers.gson.GsonMessageBodyHandler;
@@ -37,10 +38,11 @@ public class GreetingApp extends TapestryBackedJerseyApplication
     private final GoodbyeResource goodbyeResource;
 
     public GreetingApp(JerseyTapestryRequestContext requestContext,
+                       ContainerRequestContextProvider containerRequestContextProvider,
                        GsonMessageBodyHandler gsonMessageBodyHandler,
                        HelloResource helloResource, GoodbyeResource goodbyeResource)
     {
-        super(requestContext);
+        super(requestContext, containerRequestContextProvider);
         this.gsonMessageBodyHandler = gsonMessageBodyHandler;
         this.helloResource = helloResource;
         this.goodbyeResource = goodbyeResource;

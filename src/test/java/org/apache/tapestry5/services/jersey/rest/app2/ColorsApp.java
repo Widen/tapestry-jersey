@@ -20,6 +20,7 @@ import java.util.Set;
 import javax.ws.rs.ApplicationPath;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.jersey.ContainerRequestContextProvider;
 import org.apache.tapestry5.services.jersey.TapestryBackedJerseyApplication;
 import org.apache.tapestry5.services.jersey.internal.JerseyTapestryRequestContext;
 import org.apache.tapestry5.services.jersey.providers.ValueEncoderSourceParamConverterProvider;
@@ -36,9 +37,11 @@ public class ColorsApp extends TapestryBackedJerseyApplication
 
     private final ValueEncoderSourceParamConverterProvider converterProvider;
 
-    public ColorsApp(JerseyTapestryRequestContext requestContext, ValueEncoderSourceParamConverterProvider converterProvider)
+    public ColorsApp(JerseyTapestryRequestContext requestContext,
+                     ContainerRequestContextProvider containerRequestContextProvider,
+                     ValueEncoderSourceParamConverterProvider converterProvider)
     {
-        super(requestContext);
+        super(requestContext, containerRequestContextProvider);
         this.converterProvider = converterProvider;
     }
 

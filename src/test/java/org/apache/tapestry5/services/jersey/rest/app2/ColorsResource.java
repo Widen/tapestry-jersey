@@ -8,6 +8,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -16,6 +17,13 @@ import com.google.common.collect.Lists;
 @Path("/colors")
 public class ColorsResource
 {
+
+    private final ContainerRequestContext requestContext;
+
+    public ColorsResource(ContainerRequestContext requestContext)
+    {
+        this.requestContext = requestContext;
+    }
 
     @GET
     @Produces(MediaType.TEXT_PLAIN)
@@ -59,6 +67,14 @@ public class ColorsResource
     public Object demoCustomStatusException()
     {
         return Response.status(HttpServletResponse.SC_EXPECTATION_FAILED).entity("This is a custom message").build();
+    }
+
+    @GET
+    @Path("/debugdump")
+    @Produces(MediaType.TEXT_PLAIN)
+    public Object dumpContainerRequestContext()
+    {
+        return String.format("%s %s; Security Name: %s", requestContext.getMethod(), requestContext.getUriInfo().getAbsolutePath(), requestContext.getSecurityContext().getUserPrincipal() != null ? requestContext.getSecurityContext().getUserPrincipal().getName() : "[ None ]");
     }
 
 }

@@ -16,16 +16,20 @@ package org.apache.tapestry5.services.jersey;
 
 import java.util.Date;
 import java.util.List;
+import javax.ws.rs.container.ContainerRequestContext;
 
 import com.google.gson.GsonBuilder;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
+import org.apache.tapestry5.ioc.ScopeConstants;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.ServiceResources;
 import org.apache.tapestry5.ioc.annotations.Contribute;
 import org.apache.tapestry5.ioc.annotations.Local;
 import org.apache.tapestry5.ioc.services.PipelineBuilder;
+import org.apache.tapestry5.ioc.services.PropertyShadowBuilder;
 import org.apache.tapestry5.services.HttpServletRequestFilter;
 import org.apache.tapestry5.services.HttpServletRequestHandler;
+import org.apache.tapestry5.services.jersey.internal.ContainerRequestContextProviderImpl;
 import org.apache.tapestry5.services.jersey.internal.JerseyHttpServletRequestFilter;
 import org.apache.tapestry5.services.jersey.internal.JerseyRequestFilter;
 import org.apache.tapestry5.services.jersey.internal.JerseyRequestHandler;
@@ -61,6 +65,7 @@ public class JerseyModule
         binder.bind(ValueEncoderSourceParamConverterProvider.class);
         binder.bind(GsonMessageBodyHandler.class);
         binder.bind(HttpServletRequestFilter.class, JerseyHttpServletRequestFilter.class).withSimpleId();
+        binder.bind(ContainerRequestContextProvider.class, ContainerRequestContextProviderImpl.class).scope(ScopeConstants.PERTHREAD);
     }
 
     public JerseyRequestHandler buildJerseyRequestHandler(PipelineBuilder builder, ServiceResources serviceResources, List<JerseyRequestFilter> configuration, Logger logger)
@@ -94,6 +99,11 @@ public class JerseyModule
         builder.setPrettyPrinting();
 
         return new JerseyGsonBuilder(builder);
+    }
+
+    public ContainerRequestContext buildContainerRequestContext(PropertyShadowBuilder shadowBuilder, ContainerRequestContextProvider provider)
+    {
+        return shadowBuilder.build(provider, "containerRequestContext", ContainerRequestContext.class);
     }
 
 }
