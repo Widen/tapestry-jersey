@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.services.jersey;
+package org.apache.tapestry5.services.jersey.providers;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
@@ -24,12 +24,12 @@ import org.apache.tapestry5.ValueEncoder;
 import org.apache.tapestry5.services.ValueEncoderSource;
 
 @Provider
-public class JerseyTapestryParamConverterProvider implements ParamConverterProvider
+public class ValueEncoderSourceParamConverterProvider implements ParamConverterProvider
 {
 
     private final ValueEncoderSource source;
 
-    public JerseyTapestryParamConverterProvider(ValueEncoderSource source)
+    public ValueEncoderSourceParamConverterProvider(ValueEncoderSource source)
     {
         this.source = source;
     }

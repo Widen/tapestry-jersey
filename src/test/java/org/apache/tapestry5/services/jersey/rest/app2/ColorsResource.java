@@ -9,9 +9,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import com.google.common.collect.Lists;
-import org.apache.tapestry5.services.jersey.JerseyStatusCodeResponseException;
 
 @Path("/colors")
 public class ColorsResource
@@ -56,9 +56,9 @@ public class ColorsResource
 
     @GET
     @Path("/customstatusexception")
-    public String demoCustomStatusException()
+    public Object demoCustomStatusException()
     {
-        throw new JerseyStatusCodeResponseException("This is a custom message", HttpServletResponse.SC_EXPECTATION_FAILED);
+        return Response.status(HttpServletResponse.SC_EXPECTATION_FAILED).entity("This is a custom message").build();
     }
 
 }

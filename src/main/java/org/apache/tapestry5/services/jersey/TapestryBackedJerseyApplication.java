@@ -25,23 +25,23 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
 import com.google.common.base.Preconditions;
+import org.apache.tapestry5.services.jersey.internal.JerseyTapestryRequestContext;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletContainer;
 import org.glassfish.jersey.servlet.ServletProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JerseyEndpoint
+public abstract class TapestryBackedJerseyApplication extends Application
 {
 
-    private static final Logger log = LoggerFactory.getLogger(JerseyEndpoint.class);
+    private static final Logger log = LoggerFactory.getLogger(TapestryBackedJerseyApplication.class);
 
-    private String path;
-
-    private Application application;
+    private final String appPath;
 
     private JerseyTapestryRequestContext requestContext;
 
@@ -49,15 +49,58 @@ public class JerseyEndpoint
 
     private static final FilterChain END_OF_CHAIN = new EndOfChainFilterChain();
 
-    public JerseyEndpoint(String path, Application application, JerseyTapestryRequestContext requestContext, Object... otherServices)
+    public TapestryBackedJerseyApplication(JerseyTapestryRequestContext requestContext)
     {
-        this.path = path;
-        this.application = application;
         this.requestContext = requestContext;
+
+        ApplicationPath path = getClass().getAnnotation(ApplicationPath.class);
+        if (path == null)
+        {
+            throw new IllegalArgumentException("No @ApplicationPath configured for application " + getClass().getName());
+        }
+
+        appPath = path.value();
+    }
+
+    public void configureJaxRsApplication()
+    {
         try
         {
-            ServletContext servletContext = Preconditions.checkNotNull(requestContext.getApplicationGlobals().getServletContext(), "ServletContext");
-            buildContainer(servletContext, otherServices);
+            final ServletContext servletContext = Preconditions.checkNotNull(requestContext.getApplicationGlobals().getServletContext(), "ServletContext");
+
+            final ResourceConfig config = ResourceConfig.forApplication(this);
+            config.property(ServletProperties.FILTER_CONTEXT_PATH, getAppPath());
+
+            config.registerClasses(getClasses());
+            config.registerInstances(getSingletons());
+
+            servletContainer = new ServletContainer(config);
+            servletContainer.init(new FilterConfig()
+            {
+                @Override
+                public ServletContext getServletContext()
+                {
+                    return servletContext;
+                }
+
+                @Override
+                public Enumeration<String> getInitParameterNames()
+                {
+                    return Collections.enumeration(config.getPropertyNames());
+                }
+
+                @Override
+                public String getInitParameter(String name)
+                {
+                    return (String) config.getProperty(name);
+                }
+
+                @Override
+                public String getFilterName()
+                {
+                    return "JerseyHttpServletRequestFilter";
+                }
+            });
         }
         catch (ServletException e)
         {
@@ -65,58 +108,21 @@ public class JerseyEndpoint
         }
     }
 
-    public String getPath()
+    public String getAppPath()
     {
-        return path;
+        return appPath;
     }
 
-    public Application getApplication()
+    public boolean accept(String servletPath)
     {
-        return application;
-    }
-
-    private void buildContainer(final ServletContext servletContext, final Object... otherServices) throws ServletException
-    {
-        final ResourceConfig config = ResourceConfig.forApplication(application);
-        config.property(ServletProperties.FILTER_CONTEXT_PATH, path);
-        config.registerClasses(JerseyStatusCodeResponseExceptionConverter.class);
-
-        config.registerInstances(otherServices);
-
-        servletContainer = new ServletContainer(config);
-        servletContainer.init(new FilterConfig()
-        {
-            @Override
-            public ServletContext getServletContext()
-            {
-                return servletContext;
-            }
-
-            @Override
-            public Enumeration<String> getInitParameterNames()
-            {
-                return Collections.enumeration(config.getPropertyNames());
-            }
-
-            @Override
-            public String getInitParameter(String name)
-            {
-                return (String) config.getProperty(name);
-            }
-
-            @Override
-            public String getFilterName()
-            {
-                return "JerseyHttpServletRequestFilter";
-            }
-        });
+        return servletPath.startsWith(getAppPath());
     }
 
     public boolean service(String requestPath) throws IOException
     {
         if (!accept(requestPath))
         {
-            throw new IllegalArgumentException(String.format("Invalid path '%s'; must start with '%s'", requestPath, path));
+            throw new IllegalArgumentException(String.format("Invalid appPath '%s'; must start with '%s'", requestPath, appPath));
         }
 
         HttpServletRequest request = requestContext.getHttpServletRequest();
@@ -136,11 +142,6 @@ public class JerseyEndpoint
         return true;
     }
 
-    public boolean accept(String servletPath)
-    {
-        return servletPath.startsWith(path);
-    }
-
     private static final class EndOfChainFilterChain implements FilterChain
     {
         @Override
@@ -149,4 +150,5 @@ public class JerseyEndpoint
             // no-op
         }
     }
+
 }

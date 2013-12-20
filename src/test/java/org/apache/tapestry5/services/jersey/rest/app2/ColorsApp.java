@@ -18,13 +18,15 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.core.Application;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.services.jersey.TapestryBackedJerseyApplication;
+import org.apache.tapestry5.services.jersey.internal.JerseyTapestryRequestContext;
+import org.apache.tapestry5.services.jersey.providers.ValueEncoderSourceParamConverterProvider;
 import org.glassfish.jersey.filter.LoggingFilter;
 
 @ApplicationPath("/api2")
-public class ColorsApp extends Application
+public class ColorsApp extends TapestryBackedJerseyApplication
 {
 
     @Inject
@@ -32,10 +34,18 @@ public class ColorsApp extends Application
 
     private ImageResource imageResource = new ImageResource();
 
+    private final ValueEncoderSourceParamConverterProvider converterProvider;
+
+    public ColorsApp(JerseyTapestryRequestContext requestContext, ValueEncoderSourceParamConverterProvider converterProvider)
+    {
+        super(requestContext);
+        this.converterProvider = converterProvider;
+    }
+
     @Override
     public Set<Object> getSingletons()
     {
-        return new HashSet<Object>(Arrays.asList(colorsResource, imageResource, new LoggingFilter()));
+        return new HashSet<Object>(Arrays.asList(converterProvider, colorsResource, imageResource, new LoggingFilter()));
     }
 
 }

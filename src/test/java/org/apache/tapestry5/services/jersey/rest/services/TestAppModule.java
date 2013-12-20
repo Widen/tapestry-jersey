@@ -14,12 +14,11 @@
 
 package org.apache.tapestry5.services.jersey.rest.services;
 
-import javax.ws.rs.core.Application;
-
 import org.apache.tapestry5.ioc.Configuration;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.SubModule;
 import org.apache.tapestry5.services.jersey.JerseyModule;
+import org.apache.tapestry5.services.jersey.TapestryBackedJerseyApplication;
 import org.apache.tapestry5.services.jersey.rest.app1.GreetingApp;
 import org.apache.tapestry5.services.jersey.rest.app1.resources.GoodbyeResource;
 import org.apache.tapestry5.services.jersey.rest.app1.resources.HelloResource;
@@ -45,7 +44,7 @@ public class TestAppModule
         binder.bind(ColorsResource.class);
     }
 
-    public static void contributeJerseyApplications(Configuration<Application> configuration, GreetingApp greetingApp, ColorsApp colorsApp)
+    public static void contributeTapestryInitializedJerseyApplications(Configuration<TapestryBackedJerseyApplication> configuration, GreetingApp greetingApp, ColorsApp colorsApp)
     {
         configuration.add(greetingApp);
         configuration.add(colorsApp);

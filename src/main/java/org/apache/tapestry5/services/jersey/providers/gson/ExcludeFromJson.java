@@ -11,7 +11,7 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // specific language governing permissions and limitations under the License.
 
-package org.apache.tapestry5.services.jersey;
+package org.apache.tapestry5.services.jersey.providers.gson;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -23,6 +23,6 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface JerseyJsonIgnore
+public @interface ExcludeFromJson
 {
 }

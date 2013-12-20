@@ -12,15 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.services.jersey;
+package org.apache.tapestry5.services.jersey.internal;
 
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.tapestry5.services.jersey.TapestryBackedJerseyApplication;
+
 public interface JerseyRequestHandler
 {
 
-    boolean service(JerseyEndpoint endpoint, HttpServletRequest request, HttpServletResponse response) throws IOException;
+    boolean service(TapestryBackedJerseyApplication endpoint, HttpServletRequest request, HttpServletResponse response) throws IOException;
 
 }

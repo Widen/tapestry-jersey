@@ -14,8 +14,10 @@
 
 package org.apache.tapestry5.services.jersey;
 
+import java.util.Date;
 import java.util.List;
 
+import com.google.gson.GsonBuilder;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.ServiceResources;
@@ -24,6 +26,18 @@ import org.apache.tapestry5.ioc.annotations.Local;
 import org.apache.tapestry5.ioc.services.PipelineBuilder;
 import org.apache.tapestry5.services.HttpServletRequestFilter;
 import org.apache.tapestry5.services.HttpServletRequestHandler;
+import org.apache.tapestry5.services.jersey.internal.JerseyHttpServletRequestFilter;
+import org.apache.tapestry5.services.jersey.internal.JerseyRequestFilter;
+import org.apache.tapestry5.services.jersey.internal.JerseyRequestHandler;
+import org.apache.tapestry5.services.jersey.internal.JerseyTapestryRequestContext;
+import org.apache.tapestry5.services.jersey.internal.TapestryInitializedJerseyApplications;
+import org.apache.tapestry5.services.jersey.providers.ValueEncoderSourceParamConverterProvider;
+import org.apache.tapestry5.services.jersey.providers.gson.DateTimeTypeConverter;
+import org.apache.tapestry5.services.jersey.providers.gson.GmtDateTypeAdapter;
+import org.apache.tapestry5.services.jersey.providers.gson.GsonExclusionStrategy;
+import org.apache.tapestry5.services.jersey.providers.gson.GsonMessageBodyHandler;
+import org.apache.tapestry5.services.jersey.providers.gson.JerseyGsonBuilder;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
@@ -43,14 +57,20 @@ public class JerseyModule
     public static void bind(ServiceBinder binder)
     {
         binder.bind(JerseyTapestryRequestContext.class);
-        binder.bind(JerseyApplications.class);
-        binder.bind(JerseyTapestryParamConverterProvider.class);
+        binder.bind(TapestryInitializedJerseyApplications.class);
+        binder.bind(ValueEncoderSourceParamConverterProvider.class);
         binder.bind(GsonMessageBodyHandler.class);
         binder.bind(HttpServletRequestFilter.class, JerseyHttpServletRequestFilter.class).withSimpleId();
     }
 
+    public JerseyRequestHandler buildJerseyRequestHandler(PipelineBuilder builder, ServiceResources serviceResources, List<JerseyRequestFilter> configuration, Logger logger)
+    {
+        JerseyRequestHandler terminator = serviceResources.autobuild(JerseyHttpServletRequestFilter.Terminator.class);
+        return builder.build(logger, JerseyRequestHandler.class, JerseyRequestFilter.class, configuration, terminator);
+    }
+
     /**
-     * Added {@link JerseyHttpServletRequestFilter} to the very beginning of servlet filter chain.
+     * Add {@link JerseyHttpServletRequestFilter} to the request handler chain
      */
     @Contribute(HttpServletRequestHandler.class)
     public void contributeHttpServletRequestHandler(OrderedConfiguration<HttpServletRequestFilter> configuration, @Local HttpServletRequestFilter jerseyFilter)
@@ -65,10 +85,15 @@ public class JerseyModule
                 "before:GZIP");
     }
 
-    public JerseyRequestHandler buildJerseyRequestHandler(PipelineBuilder builder, ServiceResources serviceResources, List<JerseyRequestFilter> configuration, Logger logger)
+    public JerseyGsonBuilder buildJerseyGsonBuilder()
     {
-        JerseyRequestHandler terminator = serviceResources.autobuild(JerseyHttpServletRequestFilter.Terminator.class);
-        return builder.build(logger, JerseyRequestHandler.class, JerseyRequestFilter.class, configuration, terminator);
+        GsonBuilder builder = new GsonBuilder();
+        builder.registerTypeAdapter(DateTime.class, new DateTimeTypeConverter());
+        builder.registerTypeAdapter(Date.class, new GmtDateTypeAdapter());
+        builder.addSerializationExclusionStrategy(new GsonExclusionStrategy());
+        builder.setPrettyPrinting();
+
+        return new JerseyGsonBuilder(builder);
     }
 
 }

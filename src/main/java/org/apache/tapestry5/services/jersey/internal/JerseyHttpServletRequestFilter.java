@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.services.jersey;
+package org.apache.tapestry5.services.jersey.internal;
 
 import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
@@ -30,6 +30,7 @@ import org.apache.tapestry5.services.HttpServletRequestHandler;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.RequestGlobals;
 import org.apache.tapestry5.services.Response;
+import org.apache.tapestry5.services.jersey.TapestryBackedJerseyApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +44,7 @@ public class JerseyHttpServletRequestFilter implements HttpServletRequestFilter
     private static final Logger log = LoggerFactory.getLogger(JerseyHttpServletRequestFilter.class);
 
     @Inject
-    private JerseyApplications applications;
+    private TapestryInitializedJerseyApplications applications;
 
     @Inject
     private JerseyRequestHandler jerseyHandler;
@@ -51,7 +52,7 @@ public class JerseyHttpServletRequestFilter implements HttpServletRequestFilter
     @Override
     public boolean service(HttpServletRequest request, HttpServletResponse response, HttpServletRequestHandler handler) throws IOException
     {
-        for (JerseyEndpoint endPoint : applications.getEndpoints())
+        for (TapestryBackedJerseyApplication endPoint : applications.getApplications())
         {
             if (endPoint.accept(request.getServletPath()))
             {
@@ -76,7 +77,7 @@ public class JerseyHttpServletRequestFilter implements HttpServletRequestFilter
         private String applicationCharset;
 
         @Override
-        public boolean service(JerseyEndpoint endpoint, HttpServletRequest request, HttpServletResponse response) throws IOException
+        public boolean service(TapestryBackedJerseyApplication endpoint, HttpServletRequest request, HttpServletResponse response) throws IOException
         {
             // make the request/response available in jersey managed services.
             storeInToGlobals(request, response);
