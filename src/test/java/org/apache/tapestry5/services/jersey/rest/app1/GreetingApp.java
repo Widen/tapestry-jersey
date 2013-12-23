@@ -14,7 +14,7 @@
 
 package org.apache.tapestry5.services.jersey.rest.app1;
 
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import javax.ws.rs.ApplicationPath;
 
@@ -51,13 +51,15 @@ public class GreetingApp extends TapestryBackedJerseyApplication
     @Override
     public Set<Object> getSingletons()
     {
-        return Sets.newHashSet(gsonMessageBodyHandler, helloResource, goodbyeResource, new LoggingFilter());
+        return Sets.newHashSet(gsonMessageBodyHandler, helloResource, goodbyeResource);
     }
 
     @Override
     public Set<Class<?>> getClasses()
     {
-        return Collections.emptySet();
+        HashSet<Class<?>> classes = new HashSet<Class<?>>();
+        classes.add(LoggingFilter.class);
+        return classes;
     }
 
 }

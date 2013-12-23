@@ -72,12 +72,8 @@ public abstract class TapestryBackedJerseyApplication extends Application
         {
             final ServletContext servletContext = Preconditions.checkNotNull(requestContext.getApplicationGlobals().getServletContext(), "ServletContext");
 
-            final ResourceConfig config = ResourceConfig.forApplication(this);
+            final ResourceConfig config = ResourceConfig.forApplication(this); // auto adds app.getSingletons() and app.getClasses()
             config.property(ServletProperties.FILTER_CONTEXT_PATH, getAppPath());
-
-            config.registerClasses(getClasses());
-
-            config.registerInstances(getSingletons());
             config.registerInstances(new ContainerRequestContextProviderFilter(containerRequestContextProvider));
 
             servletContainer = new ServletContainer(config);
