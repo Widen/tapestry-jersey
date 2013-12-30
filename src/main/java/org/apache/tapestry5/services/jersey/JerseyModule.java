@@ -35,6 +35,7 @@ import org.apache.tapestry5.services.jersey.internal.JerseyRequestFilter;
 import org.apache.tapestry5.services.jersey.internal.JerseyRequestHandler;
 import org.apache.tapestry5.services.jersey.internal.JerseyTapestryRequestContext;
 import org.apache.tapestry5.services.jersey.internal.TapestryInitializedJerseyApplications;
+import org.apache.tapestry5.services.jersey.providers.JerseyCheckForUpdatesProviderFilter;
 import org.apache.tapestry5.services.jersey.providers.ValueEncoderSourceParamConverterProvider;
 import org.apache.tapestry5.services.jersey.providers.gson.DateTimeTypeConverter;
 import org.apache.tapestry5.services.jersey.providers.gson.GmtDateTypeAdapter;
@@ -64,14 +65,15 @@ public class JerseyModule
         binder.bind(TapestryInitializedJerseyApplications.class);
         binder.bind(ValueEncoderSourceParamConverterProvider.class);
         binder.bind(GsonMessageBodyHandler.class);
+        binder.bind(JerseyCheckForUpdatesProviderFilter.class);
         binder.bind(HttpServletRequestFilter.class, JerseyHttpServletRequestFilter.class).withSimpleId();
         binder.bind(ContainerRequestContextProvider.class, ContainerRequestContextProviderImpl.class).scope(ScopeConstants.PERTHREAD);
     }
 
-    public JerseyRequestHandler buildJerseyRequestHandler(PipelineBuilder builder, ServiceResources serviceResources, List<JerseyRequestFilter> configuration, Logger logger)
+    public JerseyRequestHandler buildJerseyRequestHandler(PipelineBuilder pipelineBuilder, ServiceResources serviceResources, List<JerseyRequestFilter> configuration, Logger logger)
     {
         JerseyRequestHandler terminator = serviceResources.autobuild(JerseyHttpServletRequestFilter.Terminator.class);
-        return builder.build(logger, JerseyRequestHandler.class, JerseyRequestFilter.class, configuration, terminator);
+        return pipelineBuilder.build(logger, JerseyRequestHandler.class, JerseyRequestFilter.class, configuration, terminator);
     }
 
     /**
@@ -84,8 +86,6 @@ public class JerseyModule
 
         configuration.add("JerseyFilter", jerseyFilter,
                 "after:StoreIntoGlobals",
-                "after:SecurityConfiguration",
-                "after:SecurityRequestFilter",
                 "before:EndOfRequest",
                 "before:GZIP");
     }

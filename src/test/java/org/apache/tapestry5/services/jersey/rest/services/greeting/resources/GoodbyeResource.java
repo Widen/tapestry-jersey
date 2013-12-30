@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.services.jersey.rest.app1.resources;
+package org.apache.tapestry5.services.jersey.rest.services.greeting.resources;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -24,8 +24,8 @@ import javax.ws.rs.core.Request;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 
-import org.apache.tapestry5.services.jersey.rest.app1.entities.Greeting;
-import org.apache.tapestry5.services.jersey.rest.app1.services.SimpleService;
+import org.apache.tapestry5.services.jersey.rest.services.greeting.SimpleService;
+import org.apache.tapestry5.services.jersey.rest.services.greeting.entities.Greeting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -43,11 +43,15 @@ public class JerseyHttpServletRequestFilter implements HttpServletRequestFilter
 
     private static final Logger log = LoggerFactory.getLogger(JerseyHttpServletRequestFilter.class);
 
-    @Inject
-    private TapestryInitializedJerseyApplications applications;
+    private final TapestryInitializedJerseyApplications applications;
 
-    @Inject
-    private JerseyRequestHandler jerseyHandler;
+    private final JerseyRequestHandler jerseyHandler;
+
+    public JerseyHttpServletRequestFilter(TapestryInitializedJerseyApplications applications, JerseyRequestHandler jerseyHandler)
+    {
+        this.applications = applications;
+        this.jerseyHandler = jerseyHandler;
+    }
 
     @Override
     public boolean service(HttpServletRequest request, HttpServletResponse response, HttpServletRequestHandler handler) throws IOException
@@ -66,15 +70,18 @@ public class JerseyHttpServletRequestFilter implements HttpServletRequestFilter
     public static class Terminator implements JerseyRequestHandler
     {
 
-        @Inject
-        private RequestGlobals requestGlobals;
+        private final RequestGlobals requestGlobals;
 
-        @Inject
-        private TapestrySessionFactory sessionFactory;
+        private final TapestrySessionFactory sessionFactory;
 
-        @Inject
-        @Symbol(SymbolConstants.CHARSET)
-        private String applicationCharset;
+        private final String applicationCharset;
+
+        public Terminator(RequestGlobals requestGlobals, TapestrySessionFactory sessionFactory, @Inject @Symbol(SymbolConstants.CHARSET) String applicationCharset)
+        {
+            this.requestGlobals = requestGlobals;
+            this.sessionFactory = sessionFactory;
+            this.applicationCharset = applicationCharset;
+        }
 
         @Override
         public boolean service(TapestryBackedJerseyApplication endpoint, HttpServletRequest request, HttpServletResponse response) throws IOException

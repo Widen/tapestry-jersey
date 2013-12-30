@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.services.jersey.rest.app1.entities;
+package org.apache.tapestry5.services.jersey.rest.services.greeting.entities;
 
 import java.util.Date;
 

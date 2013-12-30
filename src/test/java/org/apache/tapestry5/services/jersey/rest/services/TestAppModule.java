@@ -14,23 +14,30 @@
 
 package org.apache.tapestry5.services.jersey.rest.services;
 
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.Configuration;
+import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.SubModule;
 import org.apache.tapestry5.services.jersey.JerseyModule;
 import org.apache.tapestry5.services.jersey.TapestryBackedJerseyApplication;
-import org.apache.tapestry5.services.jersey.rest.app1.GreetingApp;
-import org.apache.tapestry5.services.jersey.rest.app1.resources.GoodbyeResource;
-import org.apache.tapestry5.services.jersey.rest.app1.resources.HelloResource;
-import org.apache.tapestry5.services.jersey.rest.app1.resources.HelloResourceImpl;
-import org.apache.tapestry5.services.jersey.rest.app1.services.SimpleService;
-import org.apache.tapestry5.services.jersey.rest.app1.services.SimpleServiceImpl;
 import org.apache.tapestry5.services.jersey.rest.app2.ColorsApp;
-import org.apache.tapestry5.services.jersey.rest.app2.ColorsResource;
+import org.apache.tapestry5.services.jersey.rest.services.color.ColorsResource;
+import org.apache.tapestry5.services.jersey.rest.services.greeting.GreetingApp;
+import org.apache.tapestry5.services.jersey.rest.services.greeting.SimpleService;
+import org.apache.tapestry5.services.jersey.rest.services.greeting.SimpleServiceImpl;
+import org.apache.tapestry5.services.jersey.rest.services.greeting.resources.GoodbyeResource;
+import org.apache.tapestry5.services.jersey.rest.services.greeting.resources.HelloResource;
+import org.apache.tapestry5.services.jersey.rest.services.greeting.resources.HelloResourceImpl;
 
 @SubModule(JerseyModule.class)
 public class TestAppModule
 {
+
+    public static void contributeApplicationDefaults(MappedConfiguration<String, Object> configuration)
+    {
+        configuration.add(SymbolConstants.PRODUCTION_MODE, false);
+    }
 
     public static void bind(ServiceBinder binder)
     {

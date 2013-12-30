@@ -24,6 +24,8 @@ import org.apache.tapestry5.services.jersey.ContainerRequestContextProvider;
 import org.apache.tapestry5.services.jersey.TapestryBackedJerseyApplication;
 import org.apache.tapestry5.services.jersey.internal.JerseyTapestryRequestContext;
 import org.apache.tapestry5.services.jersey.providers.ValueEncoderSourceParamConverterProvider;
+import org.apache.tapestry5.services.jersey.rest.services.color.ColorsResource;
+import org.apache.tapestry5.services.jersey.rest.services.color.ImageResource;
 import org.glassfish.jersey.filter.LoggingFilter;
 
 @ApplicationPath("/api2")

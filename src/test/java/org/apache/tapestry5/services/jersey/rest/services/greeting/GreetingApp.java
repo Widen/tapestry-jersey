@@ -12,24 +12,36 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.services.jersey.rest.app1;
+package org.apache.tapestry5.services.jersey.rest.services.greeting;
 
 import java.util.HashSet;
 import java.util.Set;
 import javax.ws.rs.ApplicationPath;
 
 import com.google.common.collect.Sets;
+import org.apache.tapestry5.SymbolConstants;
+import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.jersey.ContainerRequestContextProvider;
 import org.apache.tapestry5.services.jersey.TapestryBackedJerseyApplication;
 import org.apache.tapestry5.services.jersey.internal.JerseyTapestryRequestContext;
+import org.apache.tapestry5.services.jersey.providers.JerseyCheckForUpdatesProviderFilter;
 import org.apache.tapestry5.services.jersey.providers.gson.GsonMessageBodyHandler;
-import org.apache.tapestry5.services.jersey.rest.app1.resources.GoodbyeResource;
-import org.apache.tapestry5.services.jersey.rest.app1.resources.HelloResource;
+import org.apache.tapestry5.services.jersey.rest.services.greeting.resources.GoodbyeResource;
+import org.apache.tapestry5.services.jersey.rest.services.greeting.resources.HelloResource;
 import org.glassfish.jersey.filter.LoggingFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @ApplicationPath("/api")
 public class GreetingApp extends TapestryBackedJerseyApplication
 {
+
+    private final Logger log = LoggerFactory.getLogger(GreetingApp.class);
+
+    private final boolean productionMode;
+
+    private final JerseyCheckForUpdatesProviderFilter updatesProvider;
 
     private final GsonMessageBodyHandler gsonMessageBodyHandler;
 
@@ -37,12 +49,17 @@ public class GreetingApp extends TapestryBackedJerseyApplication
 
     private final GoodbyeResource goodbyeResource;
 
-    public GreetingApp(JerseyTapestryRequestContext requestContext,
+    public GreetingApp(@Inject @Symbol(SymbolConstants.PRODUCTION_MODE) boolean productionMode,
+                       JerseyTapestryRequestContext requestContext,
                        ContainerRequestContextProvider containerRequestContextProvider,
+                       JerseyCheckForUpdatesProviderFilter updatesProvider,
                        GsonMessageBodyHandler gsonMessageBodyHandler,
-                       HelloResource helloResource, GoodbyeResource goodbyeResource)
+                       HelloResource helloResource,
+                       GoodbyeResource goodbyeResource)
     {
         super(requestContext, containerRequestContextProvider);
+        this.productionMode = productionMode;
+        this.updatesProvider = updatesProvider;
         this.gsonMessageBodyHandler = gsonMessageBodyHandler;
         this.helloResource = helloResource;
         this.goodbyeResource = goodbyeResource;
@@ -51,7 +68,15 @@ public class GreetingApp extends TapestryBackedJerseyApplication
     @Override
     public Set<Object> getSingletons()
     {
-        return Sets.newHashSet(gsonMessageBodyHandler, helloResource, goodbyeResource);
+        HashSet<Object> singletons = Sets.newHashSet(gsonMessageBodyHandler, helloResource, goodbyeResource);
+
+        if (!productionMode)
+        {
+            log.info("Adding Updates Provider");
+            singletons.add(updatesProvider);
+        }
+
+        return singletons;
     }
 
     @Override

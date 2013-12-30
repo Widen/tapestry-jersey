@@ -12,9 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.services.jersey.rest.app1.resources;
+package org.apache.tapestry5.services.jersey.rest.services.greeting.resources;
 
-import org.apache.tapestry5.services.jersey.rest.app1.entities.Greeting;
+import org.apache.tapestry5.services.jersey.rest.services.greeting.entities.Greeting;
 
 public class HelloResourceImpl implements HelloResource
 {
@@ -22,7 +22,7 @@ public class HelloResourceImpl implements HelloResource
     @Override
     public Greeting getHelloResponse(String name, String last, String phrase)
     {
-        return new Greeting(name, last, phrase);
+        return new Greeting("foo", last, phrase);
     }
 
 }
