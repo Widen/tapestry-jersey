@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.services.jersey.rest.app2;
+package org.apache.tapestry5.services.jersey.rest.services.color;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -24,8 +24,6 @@ import org.apache.tapestry5.services.jersey.ContainerRequestContextProvider;
 import org.apache.tapestry5.services.jersey.TapestryBackedJerseyApplication;
 import org.apache.tapestry5.services.jersey.internal.JerseyTapestryRequestContext;
 import org.apache.tapestry5.services.jersey.providers.ValueEncoderSourceParamConverterProvider;
-import org.apache.tapestry5.services.jersey.rest.services.color.ColorsResource;
-import org.apache.tapestry5.services.jersey.rest.services.color.ImageResource;
 import org.glassfish.jersey.filter.LoggingFilter;
 
 @ApplicationPath("/api2")

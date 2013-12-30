@@ -21,7 +21,7 @@ import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.SubModule;
 import org.apache.tapestry5.services.jersey.JerseyModule;
 import org.apache.tapestry5.services.jersey.TapestryBackedJerseyApplication;
-import org.apache.tapestry5.services.jersey.rest.app2.ColorsApp;
+import org.apache.tapestry5.services.jersey.rest.services.color.ColorsApp;
 import org.apache.tapestry5.services.jersey.rest.services.color.ColorsResource;
 import org.apache.tapestry5.services.jersey.rest.services.greeting.GreetingApp;
 import org.apache.tapestry5.services.jersey.rest.services.greeting.SimpleService;

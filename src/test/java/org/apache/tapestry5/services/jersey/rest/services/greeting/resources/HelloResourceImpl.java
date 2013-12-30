@@ -22,7 +22,7 @@ public class HelloResourceImpl implements HelloResource
     @Override
     public Greeting getHelloResponse(String name, String last, String phrase)
     {
-        return new Greeting("foo", last, phrase);
+        return new Greeting(name, last, phrase);
     }
 
 }
