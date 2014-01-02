@@ -1,4 +1,4 @@
-package org.apache.tapestry5.services.jersey.rest.services.greeting.resources;
+package org.apache.tapestry5.services.jersey.rest.services.greetingapp.resources;
 
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -8,7 +8,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.tapestry5.services.jersey.rest.services.greeting.entities.Greeting;
+import org.apache.tapestry5.services.jersey.rest.services.greetingapp.entities.Greeting;
 
 @Path("/hello/{name}")
 public interface HelloResource

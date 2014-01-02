@@ -12,13 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.services.jersey.rest.services.greeting;
+package org.apache.tapestry5.services.jersey.rest.services.greetingapp;
 
 import java.util.HashSet;
 import java.util.Set;
 import javax.ws.rs.ApplicationPath;
 
-import com.google.common.collect.Sets;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
@@ -27,8 +26,8 @@ import org.apache.tapestry5.services.jersey.TapestryBackedJerseyApplication;
 import org.apache.tapestry5.services.jersey.internal.JerseyTapestryRequestContext;
 import org.apache.tapestry5.services.jersey.providers.JerseyCheckForUpdatesProviderFilter;
 import org.apache.tapestry5.services.jersey.providers.gson.GsonMessageBodyHandler;
-import org.apache.tapestry5.services.jersey.rest.services.greeting.resources.GoodbyeResource;
-import org.apache.tapestry5.services.jersey.rest.services.greeting.resources.HelloResource;
+import org.apache.tapestry5.services.jersey.rest.services.greetingapp.resources.GoodbyeResource;
+import org.apache.tapestry5.services.jersey.rest.services.greetingapp.resources.HelloResource;
 import org.glassfish.jersey.filter.LoggingFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,11 +67,15 @@ public class GreetingApp extends TapestryBackedJerseyApplication
     @Override
     public Set<Object> getSingletons()
     {
-        HashSet<Object> singletons = Sets.newHashSet(gsonMessageBodyHandler, helloResource, goodbyeResource);
+        Set<Object> singletons = new HashSet<Object>();
+
+        singletons.add(gsonMessageBodyHandler);
+        singletons.add(helloResource);
+        singletons.add(goodbyeResource);
 
         if (!productionMode)
         {
-            log.info("Adding Updates Provider");
+            log.info("Adding T5 service re-loader provider");
             singletons.add(updatesProvider);
         }
 
@@ -82,8 +85,10 @@ public class GreetingApp extends TapestryBackedJerseyApplication
     @Override
     public Set<Class<?>> getClasses()
     {
-        HashSet<Class<?>> classes = new HashSet<Class<?>>();
+        Set<Class<?>> classes = new HashSet<Class<?>>();
+
         classes.add(LoggingFilter.class);
+
         return classes;
     }
 

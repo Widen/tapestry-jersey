@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.services.jersey.rest.services.color;
+package org.apache.tapestry5.services.jersey.rest.services.colorapp;
 
 import java.util.Arrays;
 import java.util.HashSet;

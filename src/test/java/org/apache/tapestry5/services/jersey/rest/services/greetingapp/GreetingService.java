@@ -12,17 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.services.jersey.rest.services.greeting.resources;
+package org.apache.tapestry5.services.jersey.rest.services.greetingapp;
 
-import org.apache.tapestry5.services.jersey.rest.services.greeting.entities.Greeting;
+import org.apache.tapestry5.services.jersey.rest.services.greetingapp.entities.Greeting;
 
-public class HelloResourceImpl implements HelloResource
+public interface GreetingService
 {
 
-    @Override
-    public Greeting getHelloResponse(String name, String last, String phrase)
-    {
-        return new Greeting(name, last, phrase);
-    }
+    public Greeting getHelloGreeting(String first, String last, String msg);
 
 }

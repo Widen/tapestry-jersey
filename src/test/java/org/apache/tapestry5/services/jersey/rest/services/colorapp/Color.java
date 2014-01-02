@@ -1,4 +1,4 @@
-package org.apache.tapestry5.services.jersey.rest.services.color;
+package org.apache.tapestry5.services.jersey.rest.services.colorapp;
 
 public enum Color
 {

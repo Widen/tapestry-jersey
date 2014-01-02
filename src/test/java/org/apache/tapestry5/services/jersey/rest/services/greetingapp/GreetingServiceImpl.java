@@ -12,13 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.services.jersey.rest.services.greeting;
+package org.apache.tapestry5.services.jersey.rest.services.greetingapp;
 
-import org.apache.tapestry5.services.jersey.rest.services.greeting.entities.Greeting;
+import org.apache.tapestry5.services.jersey.rest.services.greetingapp.entities.Greeting;
 
-public interface SimpleService
+public class GreetingServiceImpl implements GreetingService
 {
 
-    public Greeting getGreeting(String first, String last, String msg);
+    public Greeting getHelloGreeting(String first, String last, String msg)
+    {
+        return new Greeting(first, last, msg);
+    }
 
 }

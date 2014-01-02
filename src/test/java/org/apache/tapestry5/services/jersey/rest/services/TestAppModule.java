@@ -21,14 +21,13 @@ import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.SubModule;
 import org.apache.tapestry5.services.jersey.JerseyModule;
 import org.apache.tapestry5.services.jersey.TapestryBackedJerseyApplication;
-import org.apache.tapestry5.services.jersey.rest.services.color.ColorsApp;
-import org.apache.tapestry5.services.jersey.rest.services.color.ColorsResource;
-import org.apache.tapestry5.services.jersey.rest.services.greeting.GreetingApp;
-import org.apache.tapestry5.services.jersey.rest.services.greeting.SimpleService;
-import org.apache.tapestry5.services.jersey.rest.services.greeting.SimpleServiceImpl;
-import org.apache.tapestry5.services.jersey.rest.services.greeting.resources.GoodbyeResource;
-import org.apache.tapestry5.services.jersey.rest.services.greeting.resources.HelloResource;
-import org.apache.tapestry5.services.jersey.rest.services.greeting.resources.HelloResourceImpl;
+import org.apache.tapestry5.services.jersey.rest.services.colorapp.ColorsApp;
+import org.apache.tapestry5.services.jersey.rest.services.colorapp.ColorsResource;
+import org.apache.tapestry5.services.jersey.rest.services.greetingapp.GreetingApp;
+import org.apache.tapestry5.services.jersey.rest.services.greetingapp.GreetingService;
+import org.apache.tapestry5.services.jersey.rest.services.greetingapp.GreetingServiceImpl;
+import org.apache.tapestry5.services.jersey.rest.services.greetingapp.resources.GoodbyeResource;
+import org.apache.tapestry5.services.jersey.rest.services.greetingapp.resources.HelloResourceImpl;
 
 @SubModule(JerseyModule.class)
 public class TestAppModule
@@ -41,10 +40,10 @@ public class TestAppModule
 
     public static void bind(ServiceBinder binder)
     {
-        binder.bind(SimpleService.class, SimpleServiceImpl.class);
+        binder.bind(GreetingService.class, GreetingServiceImpl.class);
 
         binder.bind(GreetingApp.class);
-        binder.bind(HelloResource.class, HelloResourceImpl.class);
+        binder.bind(HelloResourceImpl.class); // For JAX-RS @Context injection to work, must bind without interface
         binder.bind(GoodbyeResource.class);
 
         binder.bind(ColorsApp.class);

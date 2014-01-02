@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry5.services.jersey.rest.services.greeting.resources;
+package org.apache.tapestry5.services.jersey.rest.services.greetingapp.resources;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -24,8 +24,8 @@ import javax.ws.rs.core.Request;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 
-import org.apache.tapestry5.services.jersey.rest.services.greeting.SimpleService;
-import org.apache.tapestry5.services.jersey.rest.services.greeting.entities.Greeting;
+import org.apache.tapestry5.services.jersey.rest.services.greetingapp.GreetingService;
+import org.apache.tapestry5.services.jersey.rest.services.greetingapp.entities.Greeting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +35,7 @@ public class GoodbyeResource
 
     private final Logger log = LoggerFactory.getLogger(GoodbyeResource.class);
 
-    private final SimpleService simpleService;
+    private final GreetingService greetingService;
 
     @Context
     private HttpHeaders headers;
@@ -49,9 +49,9 @@ public class GoodbyeResource
     @Context
     private SecurityContext securityContext;
 
-    public GoodbyeResource(SimpleService simpleService)
+    public GoodbyeResource(GreetingService greetingService)
     {
-        this.simpleService = simpleService;
+        this.greetingService = greetingService;
     }
 
     @GET
@@ -69,7 +69,7 @@ public class GoodbyeResource
             log.info("Header {}: {}", key, headers.getRequestHeader(key));
         }
 
-        return simpleService.getGreeting("Doris", "Schutt", "The answer to life the universe and everything...");
+        return greetingService.getHelloGreeting("Doris", "Schutt", "The answer to life the universe and everything...");
     }
 
 }
