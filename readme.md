@@ -116,10 +116,10 @@ public class HelloResourceImpl implements HelloResource
     private GreetingService greetingService;
 
     @javax.ws.rs.core.Context // JAX-RS/Jersey Injection
-    private Request request;
+    private javax.ws.rs.core.Request request;
 
     @javax.ws.rs.core.Context // JAX-RS/Jersey Injection
-    private UriInfo uriInfo;
+    private javax.ws.rs.core.UriInfo uriInfo;
 
     @Override
     public Greeting getHelloResponse(String name, String last, String phrase)
