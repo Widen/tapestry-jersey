@@ -89,7 +89,7 @@ public class GreetingApp extends TapestryBackedJerseyApplication
 }
 ```
 
-Example of a typical Resource class.
+Example of a typical Resource class. (Usage of interface class is not required.)
 
 #### HelloResource.java
 ```
