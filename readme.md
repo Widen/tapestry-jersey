@@ -6,7 +6,7 @@ Some simple, runnable, JAX-RS examples are in the [test tree](src/test/java/org/
 
 To configure your JAX-RS 2.0 app, import [JerseyModule](src/main/java/org/apache/tapestry5/services/jersey/JerseyModule.java) as a SubModule. Additionally, bind your JAX-RS Application class extending [TapestryBackedJerseyApplication](src/main/java/org/apache/tapestry5/services/jersey/TapestryBackedJerseyApplication.java) and any additional resource services. Contribute the JAX-RS application to the TapestryInitializedJerseyApplications service.
 
-Unfortunately, for JAX-RS @Conect injection to work you must bind Resource classes directly (e.g. __without__ using the interface class).
+Unfortunately, for JAX-RS @Context injection to work you must bind Resource classes directly (e.g. __without__ using the interface class).
 
 
 #### MyRestModule.java
@@ -28,7 +28,9 @@ public class MyRestModule {
 
 
 Your JAX-RS application class is required to extend TapestryBackedJerseyApplication and must have an javax.ws.rs.ApplicationPath annotation applied.
-You must include any JAX-RS Resource classes as Singletons. Additionally, several useful add-on modules are available.
+You must include any JAX-RS Resource classes as Singletons. Typically, these resource classes will contain other Tapestry IOC configured services.
+
+Additionally, several useful add-on modules are available.
  - `org.apache.tapestry5.services.jersey.providers.JerseyCheckForUpdatesProviderFilter` - Enables hot class re-loading of resource classes
  - `org.apache.tapestry5.services.jersey.providers.gson.GsonMessageBodyHandler` - Enables Gson JSON message handler
  - `org.apache.tapestry5.services.jersey.providers.ValueEncoderSourceParamConverterProvider` - Enables T5 Value Encoder
