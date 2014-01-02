@@ -1,4 +1,4 @@
-## JAX-RS 2 (Jersey 2.4) integration with Tapestry 5 configured application
+## JAX-RS 2 / JSR-339 (using Jersey 2.4) integration with Tapestry 5 configured application
 
 Jersey documentation is located at [jersey.java.net](https://jersey.java.net/documentation/latest/index.html). The [Resources](https://jersey.java.net/documentation/latest/jaxrs-resources.html) section is particular useful.
 
