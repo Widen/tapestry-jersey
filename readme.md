@@ -31,9 +31,9 @@ Your JAX-RS application class is required to extend TapestryBackedJerseyApplicat
 You must include any JAX-RS Resource classes as Singletons. Typically, these resource classes will contain other Tapestry IOC configured services.
 
 Additionally, several useful add-on modules are available.
- - `org.apache.tapestry5.services.jersey.providers.JerseyCheckForUpdatesProviderFilter` - Enables hot class re-loading of resource classes
- - `org.apache.tapestry5.services.jersey.providers.gson.GsonMessageBodyHandler` - Enables Gson JSON message handler
- - `org.apache.tapestry5.services.jersey.providers.ValueEncoderSourceParamConverterProvider` - Enables T5 Value Encoder
+ - `org.apache.tapestry5.services.jersey.providers.JerseyCheckForUpdatesProviderFilter` - Enables hot class re-loading of resource classes.
+ - `org.apache.tapestry5.services.jersey.providers.gson.GsonMessageBodyHandler` - Enables Gson JSON message handler.
+ - `org.apache.tapestry5.services.jersey.providers.ValueEncoderSourceParamConverterProvider` - Enables T5 Value Encoder in resource classes. For example, enables automatic string <--> enum conversions.
 
 #### HelloApp.java
 ```
