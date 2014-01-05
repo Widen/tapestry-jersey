@@ -14,7 +14,6 @@
 
 package org.apache.tapestry5.services.jersey.rest.services.greetingapp.resources;
 
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Request;
 import javax.ws.rs.core.UriInfo;
 
@@ -32,17 +31,11 @@ public class HelloResourceImpl implements HelloResource
     @Inject // T5 Injection
     private GreetingService greetingService;
 
-    @Context // JAX-RS/Jersey Injection
-    private Request request;
-
-    @Context
-    private UriInfo uriInfo;
-
-    @Override  // JAX-RS/Jersey Injection
-    public Greeting getHelloResponse(String name, String last, String phrase)
+    @Override
+    public Greeting getHelloResponse(String first, String last, String phrase, Request request, UriInfo uriInfo)
     {
-        log.info("Request: {} {}", request.getMethod(), uriInfo.getRequestUri());
-        return greetingService.getHelloGreeting(name, last, phrase);
+        log.info("Request TTT: {} {}", request.getMethod(), uriInfo.getRequestUri());
+        return greetingService.getHelloGreeting(first, last, phrase);
     }
 
 }

@@ -14,6 +14,8 @@ import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.ioc.internal.util.ConcurrentBarrier;
 import org.apache.tapestry5.ioc.util.TimeInterval;
 import org.apache.tapestry5.services.UpdateListenerHub;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implements a barrier that periodically asks the {@link org.apache.tapestry5.services.UpdateListenerHub} to check for
@@ -28,6 +30,8 @@ import org.apache.tapestry5.services.UpdateListenerHub;
 @Priority(100)
 public class JerseyCheckForUpdatesProviderFilter implements ContainerRequestFilter
 {
+
+    private final Logger log = LoggerFactory.getLogger(JerseyCheckForUpdatesProviderFilter.class);
 
     private final TimeInterval checkInterval;
 
@@ -48,6 +52,8 @@ public class JerseyCheckForUpdatesProviderFilter implements ContainerRequestFilt
             {
                 // Fire the update event which will force a number of checks and then
                 // corresponding invalidation events.
+
+                log.debug("Firing check for updates...");
 
                 updateListenerHub.fireCheckForUpdates();
                 lastCheck = System.currentTimeMillis();

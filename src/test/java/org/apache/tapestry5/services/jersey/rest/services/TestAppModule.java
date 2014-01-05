@@ -23,10 +23,12 @@ import org.apache.tapestry5.services.jersey.JerseyModule;
 import org.apache.tapestry5.services.jersey.TapestryBackedJerseyApplication;
 import org.apache.tapestry5.services.jersey.rest.services.colorapp.ColorsApp;
 import org.apache.tapestry5.services.jersey.rest.services.colorapp.ColorsResource;
+import org.apache.tapestry5.services.jersey.rest.services.colorapp.ColorsResourceImpl;
 import org.apache.tapestry5.services.jersey.rest.services.greetingapp.GreetingApp;
 import org.apache.tapestry5.services.jersey.rest.services.greetingapp.GreetingService;
 import org.apache.tapestry5.services.jersey.rest.services.greetingapp.GreetingServiceImpl;
 import org.apache.tapestry5.services.jersey.rest.services.greetingapp.resources.GoodbyeResource;
+import org.apache.tapestry5.services.jersey.rest.services.greetingapp.resources.HelloResource;
 import org.apache.tapestry5.services.jersey.rest.services.greetingapp.resources.HelloResourceImpl;
 
 @SubModule(JerseyModule.class)
@@ -43,11 +45,11 @@ public class TestAppModule
         binder.bind(GreetingService.class, GreetingServiceImpl.class);
 
         binder.bind(GreetingApp.class);
-        binder.bind(HelloResourceImpl.class); // For JAX-RS @Context injection to work, must bind without interface
+        binder.bind(HelloResource.class, HelloResourceImpl.class);
         binder.bind(GoodbyeResource.class);
 
         binder.bind(ColorsApp.class);
-        binder.bind(ColorsResource.class);
+        binder.bind(ColorsResource.class, ColorsResourceImpl.class);
     }
 
     public static void contributeTapestryInitializedJerseyApplications(Configuration<TapestryBackedJerseyApplication> configuration, GreetingApp greetingApp, ColorsApp colorsApp)

@@ -6,8 +6,6 @@ Some simple, runnable, JAX-RS examples are in the [test tree](src/test/java/org/
 
 To configure your JAX-RS 2.0 app, import [JerseyModule](src/main/java/org/apache/tapestry5/services/jersey/JerseyModule.java) as a SubModule. Additionally, bind your JAX-RS Application class extending [TapestryBackedJerseyApplication](src/main/java/org/apache/tapestry5/services/jersey/TapestryBackedJerseyApplication.java) and any additional resource services. Contribute the JAX-RS application to the TapestryInitializedJerseyApplications service.
 
-Unfortunately, for JAX-RS @Context injection to work you must bind Resource classes directly (e.g. __without__ using the interface class).
-
 
 #### MyRestModule.java
 ```
@@ -15,8 +13,8 @@ Unfortunately, for JAX-RS @Context injection to work you must bind Resource clas
 public class MyRestModule {
 	public static void bind(ServiceBinder binder) {
 		binder.bind(HelloApp.class);
-		binder.bind(HelloResourceImpl.class); // For JAX-RS @Context injection to work, must bind without interface of HelloResource.class
-		binder.bind(GoodbyeResourceImpl.class); // For JAX-RS @Context injection to work, must bind without interface of GoodbyeResource.class
+		binder.bind(HelloResource.class, HelloResourceImpl.class);
+		binder.bind(GoodbyeResourceImpl.class); // OK, but won't be re-loadable by T5 IOC
 	}
 
     public static void contributeTapestryInitializedJerseyApplications(Configuration<TapestryBackedJerseyApplication> configuration, HelloApp helloApp)
@@ -46,9 +44,7 @@ public class GreetingApp extends TapestryBackedJerseyApplication
 
     private final GsonMessageBodyHandler gsonMessageBodyHandler; // optional; enables GSON JSON conversion
 
-	private final HelloResource helloResource;
-
-	private final GoodbyeResource goodbyeResource;
+	private final Set<Object> singletonResources = new HashSet<Object>();
 
 	public GreetingApp(@Inject @Symbol(SymbolConstants.PRODUCTION_MODE) boolean productionMode,
 					   JerseyTapestryRequestContext requestContext,
@@ -61,25 +57,24 @@ public class GreetingApp extends TapestryBackedJerseyApplication
 		this.productionMode = productionMode;
 		this.updatesProvider = updatesProvider;
 		this.gsonMessageBodyHandler = gsonMessageBodyHandler;
-		this.helloResource = helloResource;
-		this.goodbyeResource = goodbyeResource;
+
+		singletonResources.add(helloResource);
+		singletonResources.add(goodbyeResource);
 	}
 
 	@Override
 	public Set<Object> getSingletons() {
         Set<Object> singletons = new HashSet<Object>();
 
-        singletons.add(gsonMessageBodyHandler);
-        singletons.add(helloResource);
-        singletons.add(goodbyeResource);
+        singletonResources.add(gsonMessageBodyHandler);
 
         if (!productionMode)
         {
             log.info("Adding T5 service re-loader provider");
-            singletons.add(updatesProvider);
+            singletonResources.add(updatesProvider);
         }
 
-        return singletons;
+        return singletonResources;
 	}
 
 	@Override
@@ -91,7 +86,7 @@ public class GreetingApp extends TapestryBackedJerseyApplication
 }
 ```
 
-Example of a typical Resource class. (Usage of interface class is not required.)
+Example of a typical Resource class. All JAX-RS annotations should be declared on the interface -- this allows the resource class to be re-loadable.
 
 #### HelloResource.java
 ```
@@ -102,7 +97,9 @@ public interface HelloResource
     @Produces(MediaType.APPLICATION_JSON)
     public Greeting getHelloResponse(@PathParam("firstname") String firstname,
                                      @QueryParam("lastname") @DefaultValue("unknown") String lastname,
-                                     @QueryParam("catch-phrase") @DefaultValue("An apple a day keeps...") String catchPhrase);
+                                     @QueryParam("catch-phrase") @DefaultValue("An apple a day keeps...") String catchPhrase,
+                                     @Context Request request,
+                                     @Context UriInfo uriInfo));
 }
 ```
 
@@ -112,17 +109,11 @@ public class HelloResourceImpl implements HelloResource
 {
     private final Logger log = LoggerFactory.getLogger(HelloResourceImpl.class);
 
-    @org.apache.tapestry5.ioc.annotations.Inject // T5 Injection
+    @org.apache.tapestry5.ioc.annotations.Inject // T5 Injection; can use constructor injection too
     private GreetingService greetingService;
 
-    @javax.ws.rs.core.Context // JAX-RS/Jersey Injection
-    private javax.ws.rs.core.Request request;
-
-    @javax.ws.rs.core.Context // JAX-RS/Jersey Injection
-    private javax.ws.rs.core.UriInfo uriInfo;
-
     @Override
-    public Greeting getHelloResponse(String name, String last, String phrase)
+    public Greeting getHelloResponse(String name, String last, String phrase, Request request, UriInfo uriInfo)
     {
         log.info("Request: {} {}", request.getMethod(), uriInfo.getRequestUri());
         return greetingService.getHelloGreeting(name, last, phrase);

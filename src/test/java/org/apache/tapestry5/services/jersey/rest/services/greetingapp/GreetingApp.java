@@ -44,9 +44,7 @@ public class GreetingApp extends TapestryBackedJerseyApplication
 
     private final GsonMessageBodyHandler gsonMessageBodyHandler;
 
-    private final HelloResource helloResource;
-
-    private final GoodbyeResource goodbyeResource;
+    private final Set<Object> singletonResources = new HashSet<Object>();
 
     public GreetingApp(@Inject @Symbol(SymbolConstants.PRODUCTION_MODE) boolean productionMode,
                        JerseyTapestryRequestContext requestContext,
@@ -60,26 +58,23 @@ public class GreetingApp extends TapestryBackedJerseyApplication
         this.productionMode = productionMode;
         this.updatesProvider = updatesProvider;
         this.gsonMessageBodyHandler = gsonMessageBodyHandler;
-        this.helloResource = helloResource;
-        this.goodbyeResource = goodbyeResource;
+
+        singletonResources.add(helloResource);
+        singletonResources.add(goodbyeResource);
     }
 
     @Override
     public Set<Object> getSingletons()
     {
-        Set<Object> singletons = new HashSet<Object>();
-
-        singletons.add(gsonMessageBodyHandler);
-        singletons.add(helloResource);
-        singletons.add(goodbyeResource);
+        singletonResources.add(gsonMessageBodyHandler);
 
         if (!productionMode)
         {
-            log.info("Adding T5 service re-loader provider");
-            singletons.add(updatesProvider);
+            log.info("Adding T5 service re-loader provider to {}", this.getClass().getName());
+            singletonResources.add(updatesProvider);
         }
 
-        return singletons;
+        return singletonResources;
     }
 
     @Override

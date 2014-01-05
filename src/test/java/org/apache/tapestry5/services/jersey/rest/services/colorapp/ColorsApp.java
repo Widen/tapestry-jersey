@@ -14,41 +14,70 @@
 
 package org.apache.tapestry5.services.jersey.rest.services.colorapp;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import javax.ws.rs.ApplicationPath;
 
+import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.annotations.Inject;
+import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.jersey.ContainerRequestContextProvider;
 import org.apache.tapestry5.services.jersey.TapestryBackedJerseyApplication;
 import org.apache.tapestry5.services.jersey.internal.JerseyTapestryRequestContext;
+import org.apache.tapestry5.services.jersey.providers.JerseyCheckForUpdatesProviderFilter;
 import org.apache.tapestry5.services.jersey.providers.ValueEncoderSourceParamConverterProvider;
 import org.glassfish.jersey.filter.LoggingFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @ApplicationPath("/api2")
 public class ColorsApp extends TapestryBackedJerseyApplication
 {
 
+    private final Logger log = LoggerFactory.getLogger(ColorsApp.class);
+
+    private final Set<Object> singletonResources = new HashSet<Object>();
+
+    private final boolean productionMode;
+
+    private final JerseyCheckForUpdatesProviderFilter updatesProvider;
+
     @Inject
     private ColorsResource colorsResource;
 
-    private ImageResource imageResource = new ImageResource();
-
-    private final ValueEncoderSourceParamConverterProvider converterProvider;
-
-    public ColorsApp(JerseyTapestryRequestContext requestContext,
+    public ColorsApp(@Inject @Symbol(SymbolConstants.PRODUCTION_MODE) boolean productionMode,
+                     JerseyTapestryRequestContext requestContext,
                      ContainerRequestContextProvider containerRequestContextProvider,
+                     JerseyCheckForUpdatesProviderFilter updatesProvider,
                      ValueEncoderSourceParamConverterProvider converterProvider)
     {
         super(requestContext, containerRequestContextProvider);
-        this.converterProvider = converterProvider;
+        this.productionMode = productionMode;
+        this.updatesProvider = updatesProvider;
+
+        this.singletonResources.add(converterProvider);
     }
 
     @Override
     public Set<Object> getSingletons()
     {
-        return new HashSet<Object>(Arrays.asList(converterProvider, colorsResource, imageResource, new LoggingFilter()));
+        singletonResources.add(colorsResource);
+
+        if (!productionMode)
+        {
+            log.info("Adding T5 service re-loader provider to {}", this.getClass().getName());
+            singletonResources.add(updatesProvider);
+        }
+
+        return singletonResources;
     }
 
+    @Override
+    public Set<Class<?>> getClasses()
+    {
+        Set<Class<?>> classes = new HashSet<Class<?>>();
+        classes.add(ImageResource.class);
+        classes.add(LoggingFilter.class);
+        return classes;
+    }
 }

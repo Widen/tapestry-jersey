@@ -37,18 +37,6 @@ public class GoodbyeResource
 
     private final GreetingService greetingService;
 
-    @Context
-    private HttpHeaders headers;
-
-    @Context
-    private Request request;
-
-    @Context
-    private UriInfo uriInfo;
-
-    @Context
-    private SecurityContext securityContext;
-
     public GoodbyeResource(GreetingService greetingService)
     {
         this.greetingService = greetingService;
@@ -56,7 +44,7 @@ public class GoodbyeResource
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Greeting doIt()
+    public Greeting doIt(@Context HttpHeaders headers, @Context Request request, @Context UriInfo uriInfo, @Context SecurityContext securityContext)
     {
         log.info("Request verb: {}", request.getMethod());
 
