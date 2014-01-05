@@ -31,7 +31,7 @@ You must include any JAX-RS Resource classes as Singletons. Typically, these res
 Additionally, several useful add-on modules are available.
  - `org.apache.tapestry5.services.jersey.providers.JerseyCheckForUpdatesProviderFilter` - Enables hot class re-loading of resource classes.
  - `org.apache.tapestry5.services.jersey.providers.gson.GsonMessageBodyHandler` - Enables Gson JSON message handler.
- - `org.apache.tapestry5.services.jersey.providers.ValueEncoderSourceParamConverterProvider` - Enables T5 Value Encoder in resource classes. For example, enables automatic string <--> enum conversions.
+ - `org.apache.tapestry5.services.jersey.providers.ValueEncoderSourceParamConverterProvider` - Enables T5 Value Encoder conversions in resource classes.
 
 #### HelloApp.java
 ```
