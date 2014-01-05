@@ -64,8 +64,6 @@ public class GreetingApp extends TapestryBackedJerseyApplication
 
 	@Override
 	public Set<Object> getSingletons() {
-        Set<Object> singletons = new HashSet<Object>();
-
         singletonResources.add(gsonMessageBodyHandler);
 
         if (!productionMode)
