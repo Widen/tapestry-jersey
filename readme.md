@@ -1,6 +1,6 @@
 ## JAX-RS 2 / JSR-339 (using Jersey 2.4) integration with Tapestry 5 configured application
 
-Jersey documentation is located at [jersey.java.net](https://jersey.java.net/documentation/latest/index.html). The [Resources](https://jersey.java.net/documentation/latest/jaxrs-resources.html) section is particular useful.
+Jersey documentation is located at [jersey.java.net](https://jersey.java.net/documentation/latest/index.html). The [Resources](https://jersey.java.net/documentation/latest/jaxrs-resources.html) section is particular useful. Oracle has a [tutorial of JAX-RS](http://docs.oracle.com/javaee/7/tutorial/doc/jaxrs.htm#GIEPU) as part of their Java 7 EE documentation.
 
 Some simple, runnable, JAX-RS examples are in the [test tree](src/test/java/org/apache/tapestry5/services/jersey/rest/services). Run the pre-integrated [JettyRunner](/src/test/java/org/apache/tapestry5/services/jersey/rest/JettyRunner.java) class and hit http://localhost:8080/
 
