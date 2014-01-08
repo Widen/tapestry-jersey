@@ -90,7 +90,7 @@ public class JerseyModule
                 "before:GZIP");
     }
 
-    public JerseyGsonBuilder buildJerseyGsonBuilder()
+    public static JerseyGsonBuilder buildJerseyGsonBuilder()
     {
         GsonBuilder builder = new GsonBuilder();
         builder.registerTypeAdapter(DateTime.class, new DateTimeTypeConverter());
