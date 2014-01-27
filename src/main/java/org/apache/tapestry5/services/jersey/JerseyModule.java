@@ -52,7 +52,7 @@ public class JerseyModule
 
     static
     {
-        // Jersey uses java.util.logging - bridge to slf4
+        // Jersey uses java.util.logging - bridge to slf4j
         SLF4JBridgeHandler.removeHandlersForRootLogger();
         SLF4JBridgeHandler.install();
     }
@@ -97,7 +97,7 @@ public class JerseyModule
         builder.registerTypeAdapter(Date.class, new GmtDateTypeAdapter());
         builder.addSerializationExclusionStrategy(new GsonExclusionStrategy());
         builder.setPrettyPrinting();
-
+        builder.disableHtmlEscaping();
         return new JerseyGsonBuilder(builder);
     }
 
