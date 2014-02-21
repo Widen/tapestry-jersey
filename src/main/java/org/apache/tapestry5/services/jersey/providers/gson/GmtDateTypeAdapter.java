@@ -1,13 +1,13 @@
 package org.apache.tapestry5.services.jersey.providers.gson;
 
 import java.lang.reflect.Type;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
+import java.util.List;
 import java.util.TimeZone;
 
+import com.google.common.collect.Lists;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -18,39 +18,36 @@ import com.google.gson.JsonSyntaxException;
 
 public class GmtDateTypeAdapter implements JsonSerializer<Date>, JsonDeserializer<Date>
 {
-    private final DateFormat dateFormat;
 
-    public GmtDateTypeAdapter()
-    {
-        dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
-        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-    }
+    private final List<String> formats = Lists.newArrayList("yyyy-MM-dd'T'HH:mm:ss'Z'", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
     @Override
     public synchronized JsonElement serialize(Date date, Type type,
                                               JsonSerializationContext jsonSerializationContext)
     {
-        synchronized (dateFormat)
-        {
-            String dateFormatAsString = dateFormat.format(date);
-            return new JsonPrimitive(dateFormatAsString);
-        }
+        SimpleDateFormat sdf = new SimpleDateFormat(formats.get(0));
+        sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return new JsonPrimitive(sdf.format(date));
     }
 
     @Override
     public synchronized Date deserialize(JsonElement jsonElement, Type type,
                                          JsonDeserializationContext jsonDeserializationContext)
     {
-        try
+        for (String f : formats)
         {
-            synchronized (dateFormat)
+            try
             {
-                return dateFormat.parse(jsonElement.getAsString());
+                SimpleDateFormat sdf = new SimpleDateFormat(f);
+                sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+                return sdf.parse(jsonElement.getAsString());
+            }
+            catch (ParseException ignored)
+            {
             }
         }
-        catch (ParseException e)
-        {
-            throw new JsonSyntaxException(jsonElement.getAsString(), e);
-        }
+
+        throw new JsonSyntaxException("Date is not parsable:" + jsonElement.getAsString());
     }
+
 }

@@ -24,9 +24,9 @@ configurations {
     all*.exclude group: 'commons-logging', module: 'commons-logging'
     all*.exclude group: 'org.slf4j', module: 'slf4j-log4j12'
     all*.exclude group: 'log4j', module: 'log4j'
-    all*.exclude group: 'log4j', module: 'log4j', version: '2.1_3'
-    all*.exclude group: 'org.eclipse.jetty.orbit', module: 'javax.servlet', ext: 'orbit'  //@see http://stackoverflow.com/questions/9889674/sbt-jetty-and-servlet-3-0
-    all*.exclude group: 'javax.servlet', module: 'servlet-api', version: '2.5'
+    all*.exclude group: 'org.eclipse.jetty.orbit', module: 'javax.servlet', ext: 'orbit'  // @see http://stackoverflow.com/questions/9889674/sbt-jetty-and-servlet-3-0
+    all*.exclude group: 'javax.servlet', module: 'servlet-api'
+    all*.exclude group: 'org.glassfish.jersey.containers', module: 'jersey-container-servlet' // exclude servlet3 auto-deploy
 }
 
 dependencies {
