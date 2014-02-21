@@ -17,6 +17,7 @@ package org.apache.tapestry5.services.jersey.rest.services.colorapp;
 import java.util.HashSet;
 import java.util.Set;
 import javax.ws.rs.ApplicationPath;
+import javax.ws.rs.ext.ParamConverterProvider;
 
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ioc.annotations.Inject;
@@ -25,7 +26,6 @@ import org.apache.tapestry5.services.jersey.ContainerRequestContextProvider;
 import org.apache.tapestry5.services.jersey.TapestryBackedJerseyApplication;
 import org.apache.tapestry5.services.jersey.internal.JerseyTapestryRequestContext;
 import org.apache.tapestry5.services.jersey.providers.JerseyCheckForUpdatesProviderFilter;
-import org.apache.tapestry5.services.jersey.providers.ValueEncoderSourceParamConverterProvider;
 import org.glassfish.jersey.filter.LoggingFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +49,7 @@ public class ColorsApp extends TapestryBackedJerseyApplication
                      JerseyTapestryRequestContext requestContext,
                      ContainerRequestContextProvider containerRequestContextProvider,
                      JerseyCheckForUpdatesProviderFilter updatesProvider,
-                     ValueEncoderSourceParamConverterProvider converterProvider)
+                     ParamConverterProvider converterProvider)
     {
         super(requestContext, containerRequestContextProvider);
         this.productionMode = productionMode;

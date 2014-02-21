@@ -17,6 +17,7 @@ package org.apache.tapestry5.services.jersey;
 import java.util.Date;
 import java.util.List;
 import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.ext.ParamConverterProvider;
 
 import com.google.gson.GsonBuilder;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
@@ -63,7 +64,7 @@ public class JerseyModule
     {
         binder.bind(JerseyTapestryRequestContext.class);
         binder.bind(TapestryInitializedJerseyApplications.class);
-        binder.bind(ValueEncoderSourceParamConverterProvider.class);
+        binder.bind(ParamConverterProvider.class, ValueEncoderSourceParamConverterProvider.class);
         binder.bind(GsonMessageBodyHandler.class);
         binder.bind(JerseyCheckForUpdatesProviderFilter.class);
         binder.bind(HttpServletRequestFilter.class, JerseyHttpServletRequestFilter.class).withSimpleId();
