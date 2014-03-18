@@ -50,6 +50,8 @@ public abstract class TapestryBackedJerseyApplication extends Application
 
     private ServletContainer servletContainer;
 
+    private Boolean servlet3;
+
     private static final FilterChain END_OF_CHAIN = new EndOfChainFilterChain();
 
     public TapestryBackedJerseyApplication(JerseyTapestryRequestContext requestContext, ContainerRequestContextProvider containerRequestContextProvider)
@@ -138,10 +140,35 @@ public abstract class TapestryBackedJerseyApplication extends Application
         }
         catch (Throwable e)
         {
-            log.error("Status code {} returned to client for JAX-RS request '{}'", response.getStatus(), requestUrl, e);
+            if (servlet3 == null)
+            {
+                servlet3 = isServlet3Container();
+            }
+
+            if (servlet3)
+            {
+                log.error("Status error code {} on request URL '{}'", response.getStatus(), requestUrl, e);
+            }
+            else
+            {
+                log.error("Error on request URL '{}'", requestUrl, e);
+            }
         }
 
         return true;
+    }
+
+    private boolean isServlet3Container()
+    {
+        try
+        {
+            HttpServletResponse.class.getMethod("getStatus");
+            return true;
+        }
+        catch (NoSuchMethodException e)
+        {
+            return false;
+        }
     }
 
     private static final class EndOfChainFilterChain implements FilterChain
