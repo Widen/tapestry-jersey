@@ -42,6 +42,8 @@ public abstract class TapestryBackedJerseyApplication extends Application
 
     private static final Logger log = LoggerFactory.getLogger(TapestryBackedJerseyApplication.class);
 
+    private final boolean servlet3 = isServlet3Container();
+
     private final String appPath;
 
     private final JerseyTapestryRequestContext requestContext;
@@ -49,8 +51,6 @@ public abstract class TapestryBackedJerseyApplication extends Application
     private final ContainerRequestContextProvider containerRequestContextProvider;
 
     private ServletContainer servletContainer;
-
-    private Boolean servlet3;
 
     private static final FilterChain END_OF_CHAIN = new EndOfChainFilterChain();
 
@@ -140,14 +140,9 @@ public abstract class TapestryBackedJerseyApplication extends Application
         }
         catch (Throwable e)
         {
-            if (servlet3 == null)
-            {
-                servlet3 = isServlet3Container();
-            }
-
             if (servlet3)
             {
-                log.error("Status error code {} on request URL '{}'", response.getStatus(), requestUrl, e);
+                log.error("Error code '{}' on request URL '{}'", response.getStatus(), requestUrl, e);
             }
             else
             {
@@ -158,7 +153,16 @@ public abstract class TapestryBackedJerseyApplication extends Application
         return true;
     }
 
-    private boolean isServlet3Container()
+    private static final class EndOfChainFilterChain implements FilterChain
+    {
+        @Override
+        public void doFilter(ServletRequest request, ServletResponse response) throws IOException, ServletException
+        {
+            // no-op
+        }
+    }
+
+    private static boolean isServlet3Container()
     {
         try
         {
@@ -168,15 +172,6 @@ public abstract class TapestryBackedJerseyApplication extends Application
         catch (NoSuchMethodException e)
         {
             return false;
-        }
-    }
-
-    private static final class EndOfChainFilterChain implements FilterChain
-    {
-        @Override
-        public void doFilter(ServletRequest request, ServletResponse response) throws IOException, ServletException
-        {
-            // no-op
         }
     }
 
