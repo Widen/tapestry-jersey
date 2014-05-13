@@ -14,11 +14,6 @@
 
 package org.apache.tapestry5.services.jersey;
 
-import java.util.Date;
-import java.util.List;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.ext.ParamConverterProvider;
-
 import com.google.gson.GsonBuilder;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ScopeConstants;
@@ -47,6 +42,11 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
+
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.ext.ParamConverterProvider;
+import java.util.Date;
+import java.util.List;
 
 public class JerseyModule
 {
@@ -87,6 +87,7 @@ public class JerseyModule
 
         configuration.add("JerseyFilter", jerseyFilter,
                 "after:StoreIntoGlobals",
+                "before:MultipartFilter",
                 "before:EndOfRequest",
                 "before:GZIP");
     }
