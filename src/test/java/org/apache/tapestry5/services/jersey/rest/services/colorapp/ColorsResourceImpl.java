@@ -1,13 +1,13 @@
 package org.apache.tapestry5.services.jersey.rest.services.colorapp;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Random;
+import jersey.repackaged.com.google.common.collect.Lists;
+
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Response;
-
-import com.google.common.collect.Lists;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Random;
 
 public class ColorsResourceImpl implements ColorsResource
 {
