@@ -14,10 +14,9 @@
 
 package org.apache.tapestry5.services.jersey.rest;
 
-import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.SessionManager;
-import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.eclipse.jetty.util.component.AbstractLifeCycle;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.eclipse.jetty.webapp.WebAppContext;
@@ -34,16 +33,10 @@ public class JettyRunner
     {
         try
         {
-//            System.setProperty("http.proxyHost", "127.0.0.1");
-//            System.setProperty("http.proxyPort", "8888");
-//            System.setProperty("https.proxyHost", "127.0.0.1");
-//            System.setProperty("https.proxyPort", "8888");
-
-            Connector connector = new SelectChannelConnector();
-            connector.setPort(8080);
-
             Server server = new Server();
-            server.setConnectors(new Connector[] { connector });
+            ServerConnector connector = new ServerConnector(server);
+            connector.setPort(8080);
+            server.addConnector(connector);
 
             WebAppContext context = new WebAppContext();
             context.setContextPath("/");
